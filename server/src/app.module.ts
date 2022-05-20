@@ -8,6 +8,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { UserEntity } from './users/users.entity';
 import { UsersModule } from './users/users.module';
 
 const typeOrmModuleOptions = {
@@ -19,7 +20,7 @@ const typeOrmModuleOptions = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [],
+    entities: [UserEntity],
     synchronize: true,
     autoLoadEntities: true,
     logging: true,
