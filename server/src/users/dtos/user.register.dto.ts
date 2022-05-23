@@ -1,5 +1,4 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { UserEntity } from '../users.entity';
 
 export class UserRegisterDto extends PickType(UserEntity, [
