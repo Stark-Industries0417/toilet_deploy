@@ -45,7 +45,8 @@ export class UserEntity extends CommonEntity {
   @IsString()
   @Column({
     type: 'varchar',
-    default: 'https://t1.daumcdn.net/cfile/tistory/2513B53E55DB206927',
+    default:
+      'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg',
   })
   imgUrl: string;
 }
