@@ -4,7 +4,7 @@ import { UseInterceptors } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { UserRegisterDto } from '../dtos/user.register.dto';
@@ -26,6 +26,8 @@ export class UsersController {
     description: '회원가입 성공',
     type: UserResponseDto,
   })
+  @ApiConsumes('application/json')
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOperation({ summary: '회원가입' })
   @Post()
   signUp(@Body() userRegisterDto: UserRegisterDto) {
