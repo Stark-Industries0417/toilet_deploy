@@ -2,3 +2,4 @@ awef
 awefwef
 awfe
 awefafw
+젠킨스 컨테이너 내부 깃 username, useremail global 설정
