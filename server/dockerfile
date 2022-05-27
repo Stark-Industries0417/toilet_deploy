@@ -4,6 +4,5 @@ COPY . .
 RUN npm install
 RUN npm run build
 RUN npm i -g pm2
-RUN rm -rf node_modules package-lock.json
-RUN npm i
+RUN pwd
 CMD ["npm", "run", "start:prod"]
