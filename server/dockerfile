@@ -2,5 +2,5 @@ FROM node:16 AS builder
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN rm -f package-lock.json
+RUN npm update
 CMD ["npm", "run", "start:dev"]
