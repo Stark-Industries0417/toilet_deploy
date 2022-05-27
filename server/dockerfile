@@ -1,8 +1,5 @@
-FROM node:16 AS builder
+FROM node:14 AS builder
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm audit fix --force
-RUN npm update
-RUN npm audit fix --force
 CMD ["npm", "run", "start:dev"]
