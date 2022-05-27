@@ -21,7 +21,6 @@ services:
   mysql:
     restart: always
     container_name: db
-    platform: linux/x86_64
     image: mysql
     ports:
       - '3306:3306'
