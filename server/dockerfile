@@ -3,6 +3,4 @@ WORKDIR /app
 COPY . .
 RUN npm install
 RUN npm run build
-RUN npm i -g pm2
-RUN pwd
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:dev"]
