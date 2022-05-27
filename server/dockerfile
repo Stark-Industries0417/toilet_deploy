@@ -1,5 +1,6 @@
-FROM node:14 AS builder
+FROM node:16 AS builder
 WORKDIR /app
 COPY . .
+RUN rm -f package-lock.json
 RUN npm install
 CMD ["npm", "run", "start:dev"]
