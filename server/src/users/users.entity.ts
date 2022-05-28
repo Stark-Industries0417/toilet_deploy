@@ -24,9 +24,8 @@ export class UserEntity extends CommonEntity {
     description: 'password',
     required: true,
   })
-  @Exclude()
+  @IsString()
   @Column({
-    select: false,
     type: 'varchar',
     nullable: false,
   })
