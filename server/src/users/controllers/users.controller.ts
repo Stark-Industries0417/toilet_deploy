@@ -1,21 +1,25 @@
-import { Get } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthService } from 'src/auth/auth.service';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
+import { UserLoginDto } from '../dtos/user.login.dto';
 import { UserRegisterDto } from '../dtos/user.register.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { UsersService } from '../services/users.service';
 
-@Controller('users')
+@Controller('api/users')
 @UseInterceptors(SuccessInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiResponse({
     status: 500,
@@ -29,8 +33,14 @@ export class UsersController {
   @ApiConsumes('application/json')
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOperation({ summary: '회원가입' })
-  @Post()
+  @Post('register')
   signUp(@Body() userRegisterDto: UserRegisterDto) {
     return this.usersService.signUp(userRegisterDto);
+  }
+
+  @ApiOperation({ summary: '로그인' })
+  @Post('login')
+  logIn(@Body() data: UserLoginDto) {
+    return this.authService.jwtLogIn(data);
   }
 }
