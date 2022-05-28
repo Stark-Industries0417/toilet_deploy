@@ -1,6 +1,8 @@
 FROM node:16 AS builder
 WORKDIR /app
 COPY . .
+RUN ls -al
 RUN npm install
 RUN npm install --save @nestjs/passport passport passport-local
+RUN ls -al
 CMD ["npm", "run", "start:dev"]
