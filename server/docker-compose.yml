@@ -8,9 +8,9 @@ services:
     build:
       context: .
       dockerfile: ./dockerfile
-    volumes:
-      - ./home/jenkins/toilet_deploy/server:/app
-      - /app/node_modules
+    # volumes:
+    #   - ./:/app
+    #   - /app/node_modules
     ports:
       - '5000:5000'
     links:
