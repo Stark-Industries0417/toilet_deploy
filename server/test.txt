@@ -1,6 +1,0 @@
-awef
-awefwef
-awfe
-awefafw
-젠킨스 컨테이너 내부 깃 username, useremail global 설정
-컨테이너 내부 젠킨스 안에서 깃 username, password 설정이 안되서 execute shell 내부에 username, password 작성
