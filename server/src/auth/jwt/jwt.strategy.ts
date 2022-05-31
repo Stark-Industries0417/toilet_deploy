@@ -1,11 +1,17 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Payload } from './jwt.payload';
+import { Repository } from 'typeorm';
+import { UserEntity } from 'src/users/users.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -13,5 +19,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // async validate(payload: any) {}
+  async validate(payload: Payload) {
+    const user = await this.usersRepository.findOne(payload.sub);
+
+    if (user)
+      return {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        imgUrl: user.imgUrl,
+      };
+    else throw new UnauthorizedException('접근 오류');
+  }
 }
