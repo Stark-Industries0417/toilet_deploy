@@ -38,6 +38,8 @@ export class UsersController {
     return this.usersService.signUp(userRegisterDto);
   }
 
+  @ApiConsumes('application/json')
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOperation({ summary: '로그인' })
   @Post('login')
   logIn(@Body() data: UserLoginDto) {
