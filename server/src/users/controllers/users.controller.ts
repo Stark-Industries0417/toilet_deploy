@@ -52,6 +52,11 @@ export class UsersController {
     return this.authService.jwtLogIn(data);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: '현재 유저 정보',
+    type: UserResponseDto,
+  })
   @ApiOperation({ summary: '현재 유저 정보' })
   @UseGuards(JwtAuthGuard)
   @Get()
