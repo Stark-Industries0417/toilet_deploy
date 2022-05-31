@@ -18,6 +18,7 @@ export class UsersService {
     id: user.id,
     email: user.email,
     nickname: user.nickname,
+    imgUrl: user.imgUrl,
   });
 
   async signUp(userRegisterDto: UserRegisterDto): Promise<UserResponseDto> {
