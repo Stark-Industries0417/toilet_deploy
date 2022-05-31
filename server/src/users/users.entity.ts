@@ -41,6 +41,11 @@ export class UserEntity extends CommonEntity {
   @Column({ type: 'varchar', unique: true, nullable: false })
   nickname: string;
 
+  @ApiProperty({
+    example:
+      'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg',
+    description: 'user image url',
+  })
   @IsString()
   @Column({
     type: 'varchar',
