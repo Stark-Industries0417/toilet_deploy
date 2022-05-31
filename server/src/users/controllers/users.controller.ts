@@ -57,6 +57,7 @@ export class UsersController {
   @Get()
   getCurrentUser(@Req() req: Request) {
     return req.user;
+  }
 
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiConsumes('application/json')
