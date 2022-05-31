@@ -34,33 +34,29 @@ export class UsersController {
     description: '회원가입 성공',
     type: UserResponseDto,
   })
-  @ApiConsumes('application/json')
   @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiConsumes('application/json')
   @ApiOperation({ summary: '회원가입' })
   @Post('register')
   signUp(@Body() userRegisterDto: UserRegisterDto) {
     return this.usersService.signUp(userRegisterDto);
   }
 
-  @ApiConsumes('application/json')
   @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiConsumes('application/json')
   @ApiOperation({ summary: '로그인' })
   @Post('login')
   logIn(@Body() data: UserLoginDto) {
     return this.authService.jwtLogIn(data);
   }
 
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiConsumes('application/json')
   @ApiOperation({ summary: '유저 이미지 업로드' })
   @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
   async uploadUserImg(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-    return await this.awsService.uploadFileToS3('users', file);
-  }
-
-  @ApiOperation({ summary: '유저 이미지 가져오기' })
-  @Post('image')
-  getImageUrl(@Body('key') key: string) {
-    return this.awsService.getAwsS3FileUrl(key);
+    const { key } = await this.awsService.uploadFileToS3('users', file);
+    return this.usersService.saveImg(key);
   }
 }
