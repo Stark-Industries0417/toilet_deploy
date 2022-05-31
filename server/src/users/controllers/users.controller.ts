@@ -1,10 +1,12 @@
-import { Body } from '@nestjs/common';
+import { Body, Get, Req, UseGuards } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { UserLoginDto } from '../dtos/user.login.dto';
@@ -42,5 +44,12 @@ export class UsersController {
   @Post('login')
   logIn(@Body() data: UserLoginDto) {
     return this.authService.jwtLogIn(data);
+  }
+
+  @ApiOperation({ summary: '현재 유저 정보' })
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getCurrentUser(@Req() req: Request) {
+    return req.user;
   }
 }
