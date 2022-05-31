@@ -1,10 +1,13 @@
 import { Body } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
+import { UploadedFile } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from 'src/auth/auth.service';
+import { AwsService } from 'src/aws.service';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { UserLoginDto } from '../dtos/user.login.dto';
@@ -19,6 +22,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
+    private readonly awsService: AwsService,
   ) {}
 
   @ApiResponse({
@@ -44,5 +48,19 @@ export class UsersController {
   @Post('login')
   logIn(@Body() data: UserLoginDto) {
     return this.authService.jwtLogIn(data);
+  }
+
+  @ApiOperation({ summary: '유저 이미지 업로드' })
+  @UseInterceptors(FileInterceptor('image'))
+  @Post('upload')
+  async uploadUserImg(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return await this.awsService.uploadFileToS3('users', file);
+  }
+
+  @ApiOperation({ summary: '유저 이미지 가져오기' })
+  @Post('image')
+  getImageUrl(@Body('key') key: string) {
+    return this.awsService.getAwsS3FileUrl(key);
   }
 }
