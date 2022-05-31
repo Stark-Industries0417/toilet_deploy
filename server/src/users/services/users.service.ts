@@ -6,13 +6,24 @@ import { UserRegisterDto } from '../dtos/user.register.dto';
 import { UserEntity } from '../users.entity';
 import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from '../dtos/user.response.dto';
+import { AwsService } from 'src/aws.service';
 
 @Injectable()
 export class UsersService {
+  userImg: string;
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
-  ) {}
+    private readonly awsService: AwsService,
+  ) {
+    this.userImg =
+      'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg';
+  }
+
+  saveImg(key: string) {
+    this.userImg = this.awsService.getAwsS3FileUrl(key);
+    return this.userImg;
+  }
 
   readonly userFilter = (user: UserEntity): UserResponseDto => ({
     id: user.id,
@@ -36,6 +47,7 @@ export class UsersService {
     if (hasNickname) {
       throw new UnauthorizedException('이미 사용중인 닉네임 입니다.');
     }
+    const imgUrl = this.userImg;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -43,6 +55,7 @@ export class UsersService {
       email,
       password: hashedPassword,
       nickname,
+      imgUrl,
     });
     return this.userFilter(user);
   }
