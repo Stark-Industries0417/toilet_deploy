@@ -49,8 +49,7 @@ export class UserEntity extends CommonEntity {
   @IsString()
   @Column({
     type: 'varchar',
-    default:
-      'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg',
+    nullable: false,
   })
   imgUrl: string;
 }
