@@ -2,7 +2,7 @@ import { Body, Get, Req, UseGuards } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common';
-import { Post } from '@nestjs/common';
+import { Post, Patch } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -12,6 +12,8 @@ import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { AwsService } from 'src/aws.service';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
+import { MailService } from 'src/mail/mail.service';
+import { UserEmailDto } from '../dtos/user.email.dto';
 import { UserLoginDto } from '../dtos/user.login.dto';
 import { UserRegisterDto } from '../dtos/user.register.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
@@ -25,6 +27,7 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
     private readonly awsService: AwsService,
+    private readonly mailService: MailService,
   ) {}
 
   @ApiResponse({
@@ -44,6 +47,10 @@ export class UsersController {
     return this.usersService.signUp(userRegisterDto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'JWT 토큰 발급',
+  })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiConsumes('application/json')
   @ApiOperation({ summary: '로그인' })
@@ -64,6 +71,10 @@ export class UsersController {
     return req.user;
   }
 
+  @ApiResponse({
+    status: 200,
+    description: '회원가입 시 프로필 이미지 저장',
+  })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiConsumes('application/json')
   @ApiOperation({ summary: '유저 이미지 업로드' })
@@ -72,5 +83,21 @@ export class UsersController {
   async uploadUserImg(@UploadedFile() file: Express.Multer.File) {
     const { key } = await this.awsService.uploadFileToS3('users', file);
     return this.usersService.saveImg(key);
+  }
+  @ApiResponse({
+    status: 200,
+    description: '유저가 기입한 이메일로 비밀번호 재설정페이지 url 전송',
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiConsumes('application/json')
+  @ApiOperation({ summary: '비밀번호 재설정' })
+  @Post('redirect')
+  sendMail(@Body() email: UserEmailDto) {
+    this.mailService.sendMail(email);
+  }
+
+  @Patch('reset_password')
+  resetPassword(@Body() passwords) {
+    console.log(passwords);
   }
 }
