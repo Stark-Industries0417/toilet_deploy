@@ -16,6 +16,7 @@ import { MailService } from 'src/mail/mail.service';
 import { UserEmailDto } from '../dtos/user.email.dto';
 import { UserLoginDto } from '../dtos/user.login.dto';
 import { UserRegisterDto } from '../dtos/user.register.dto';
+import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { UsersService } from '../services/users.service';
 
@@ -23,12 +24,15 @@ import { UsersService } from '../services/users.service';
 @UseInterceptors(SuccessInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class UsersController {
+  email: UserEmailDto;
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
     private readonly awsService: AwsService,
     private readonly mailService: MailService,
-  ) {}
+  ) {
+    this.email = { email: '' };
+  }
 
   @ApiResponse({
     status: 500,
@@ -73,7 +77,7 @@ export class UsersController {
 
   @ApiResponse({
     status: 200,
-    description: '회원가입 시 프로필 이미지 저장',
+    description: '유저 프로필 이미지 url 반환',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiConsumes('application/json')
@@ -84,20 +88,28 @@ export class UsersController {
     const { key } = await this.awsService.uploadFileToS3('users', file);
     return this.usersService.saveImg(key);
   }
+
   @ApiResponse({
     status: 200,
-    description: '유저가 기입한 이메일로 비밀번호 재설정페이지 url 전송',
+    description:
+      '비밀번호 재설정 페이지 url: http://localhost:3000/find_password 반환 (임시)',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiConsumes('application/json')
-  @ApiOperation({ summary: '비밀번호 재설정' })
+  @ApiOperation({ summary: '비밀번호 찾기' })
   @Post('redirect')
   sendMail(@Body() email: UserEmailDto) {
-    this.mailService.sendMail(email);
+    this.email = email;
+    return this.mailService.sendMail(email);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'success: true 반환',
+  })
+  @ApiOperation({ summary: '비밀번호 재설정 API' })
   @Patch('reset_password')
-  resetPassword(@Body() passwords) {
-    console.log(passwords);
+  resetPassword(@Body() passwords: UserResetPasswordDto) {
+    this.usersService.resetPassword(this.email, passwords);
   }
 }
