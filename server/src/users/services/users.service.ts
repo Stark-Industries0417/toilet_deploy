@@ -7,6 +7,8 @@ import { UserEntity } from '../users.entity';
 import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { AwsService } from 'src/aws.service';
+import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
+import { UserEmailDto } from '../dtos/user.email.dto';
 
 @Injectable()
 export class UsersService {
@@ -58,5 +60,24 @@ export class UsersService {
       imgUrl,
     });
     return this.userFilter(user);
+  }
+
+  async resetPassword(email: UserEmailDto, passwords: UserResetPasswordDto) {
+    const user = await this.usersRepository.findOne(email);
+    if (!user.email) {
+      throw new UnauthorizedException('존재하지 않는 이메일 입니다.');
+    }
+    const { password, checkPassword } = passwords;
+    if (password !== checkPassword) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const updateUser = {
+      email: user.email,
+      password: hashedPassword,
+      nickname: user.nickname,
+      imgUrl: user.imgUrl,
+    };
+    this.usersRepository.update(user.id, updateUser);
   }
 }
