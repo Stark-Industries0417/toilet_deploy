@@ -64,7 +64,7 @@ export class UsersService {
 
   async resetPassword(email: UserEmailDto, passwords: UserResetPasswordDto) {
     const user = await this.usersRepository.findOne(email);
-    if (!user.email) {
+    if (!user) {
       throw new UnauthorizedException('존재하지 않는 이메일 입니다.');
     }
     const { password, checkPassword } = passwords;
