@@ -96,7 +96,9 @@ export class UsersController {
   })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiConsumes('application/json')
-  @ApiOperation({ summary: '비밀번호 찾기' })
+  @ApiOperation({
+    summary: 'request 이메일이 회원가입 되있는 이메일 이어야 합니다.',
+  })
   @Post('redirect')
   sendMail(@Body() email: UserEmailDto) {
     this.email = email;
@@ -107,7 +109,9 @@ export class UsersController {
     status: 200,
     description: 'success: true 반환',
   })
-  @ApiOperation({ summary: '비밀번호 재설정 API' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiConsumes('application/json')
+  @ApiOperation({ summary: '이메일로 받은 링크로 접속한 페이지의 API' })
   @Patch('reset_password')
   resetPassword(@Body() passwords: UserResetPasswordDto) {
     this.usersService.resetPassword(this.email, passwords);
