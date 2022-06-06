@@ -25,7 +25,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         error,
       });
     } else {
-      error.statusCode = error.statusCode === 401 ? 409 : error.statusCode;
       response.status(status).json({
         success: false,
         timestamp: new Date().toISOString(),
