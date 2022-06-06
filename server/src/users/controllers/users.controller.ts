@@ -17,6 +17,9 @@ import { UserRegisterDto } from '../dtos/user.register.dto';
 import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { UsersService } from '../services/users.service';
+import { UserEditNicknameInputDto } from '../dtos/user.edit.nickname.dto';
+import { User } from '../../common/decorators/user.decorator';
+import { UserEntity } from '../users.entity';
 
 @Controller('api/users')
 @UseInterceptors(SuccessInterceptor)
@@ -107,16 +110,22 @@ export class UsersController {
     description: 'success: true 반환',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiConsumes('application/json')
   @ApiOperation({ summary: '이메일로 받은 링크로 접속한 페이지의 API' })
   @Patch('reset_password')
-  resetPassword(@Body() passwords: UserResetPasswordDto) {
-    this.usersService.resetPassword(this.email, passwords);
+  async resetPassword(@Body() passwords: UserResetPasswordDto) {
+    return await this.usersService.resetPassword(this.email, passwords);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('modify_nickname')
-  modifyNickname(@Req() req: Request, @Body() newNickname) {
-    this.usersService.modifyNickname(newNickname, req.user);
+  @ApiConsumes('application/x-www-form-urlencoded')
+  async modifyNickname(
+    @User() user: UserEntity,
+    @Body() userEditNicknameInputDto: UserEditNicknameInputDto,
+  ) {
+    return await this.usersService.modifyNickname(
+      user,
+      userEditNicknameInputDto,
+    );
   }
 }

@@ -9,7 +9,7 @@ import { AwsService } from 'src/aws.service';
 import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserEmailDto } from '../dtos/user.email.dto';
 import { ConflictException } from '@nestjs/common';
-import { UnauthorizedException } from '@nestjs/common';
+import { UserEditNicknameInputDto } from '../dtos/user.edit.nickname.dto';
 
 @Injectable()
 export class UsersService {
@@ -64,14 +64,13 @@ export class UsersService {
   }
 
   async resetPassword(email: UserEmailDto, passwords: UserResetPasswordDto) {
-    const user = await this.usersRepository.findOne(email);
-    if (!user) {
-      throw new ConflictException('존재하지 않는 이메일 입니다.');
-    }
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) throw new ConflictException('존재하지 않는 이메일 입니다.');
+
     const { password, checkPassword } = passwords;
-    if (password !== checkPassword) {
+    if (password !== checkPassword)
       throw new ConflictException('비밀번호가 일치하지 않습니다.');
-    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const updateUser = {
       email: user.email,
@@ -79,14 +78,19 @@ export class UsersService {
       nickname: user.nickname,
       imgUrl: user.imgUrl,
     };
-    this.usersRepository.update(user.id, updateUser);
+    await this.usersRepository.update(user.id, updateUser);
   }
 
-  async modifyNickname(user, newNickname) {
-    const hasNickname = await this.usersRepository.findOne(newNickname);
-    if (hasNickname) {
+  async modifyNickname(
+    user: UserEntity,
+    { nickname }: UserEditNicknameInputDto,
+  ) {
+    const findNickname = await this.usersRepository.findOne({
+      where: { nickname },
+    });
+    if (findNickname)
       throw new ConflictException('이미 사용중인 닉네임 입니다.');
-    }
-    this.usersRepository.update(user.id, newNickname);
+    user.nickname = nickname;
+    return await this.usersRepository.save(user);
   }
 }
