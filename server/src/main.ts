@@ -20,6 +20,16 @@ async function bootstrap() {
     .setTitle('toilet project')
     .setDescription('The toilet API description')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'Token',
+        name: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
