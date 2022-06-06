@@ -1,7 +1,6 @@
 import { Body, Get, Req, UseGuards } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
-import { UseFilters } from '@nestjs/common';
 import { Post, Patch } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -10,7 +9,6 @@ import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { AwsService } from 'src/aws.service';
-import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { MailService } from 'src/mail/mail.service';
 import { UserEmailDto } from '../dtos/user.email.dto';
@@ -22,7 +20,6 @@ import { UsersService } from '../services/users.service';
 
 @Controller('api/users')
 @UseInterceptors(SuccessInterceptor)
-@UseFilters(HttpExceptionFilter)
 export class UsersController {
   email: UserEmailDto;
   constructor(
@@ -115,5 +112,11 @@ export class UsersController {
   @Patch('reset_password')
   resetPassword(@Body() passwords: UserResetPasswordDto) {
     this.usersService.resetPassword(this.email, passwords);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('modify_nickname')
+  modifyNickname(@Req() req: Request, @Body() newNickname) {
+    this.usersService.modifyNickname(newNickname, req.user);
   }
 }
