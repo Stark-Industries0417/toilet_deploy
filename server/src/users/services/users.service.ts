@@ -66,11 +66,11 @@ export class UsersService {
   async resetPassword(email: UserEmailDto, passwords: UserResetPasswordDto) {
     const user = await this.usersRepository.findOne(email);
     if (!user) {
-      throw new UnauthorizedException('존재하지 않는 이메일 입니다.');
+      throw new ConflictException('존재하지 않는 이메일 입니다.');
     }
     const { password, checkPassword } = passwords;
     if (password !== checkPassword) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+      throw new ConflictException('비밀번호가 일치하지 않습니다.');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const updateUser = {
