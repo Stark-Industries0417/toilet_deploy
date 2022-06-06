@@ -9,7 +9,8 @@ import { AwsService } from 'src/aws.service';
 import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserEmailDto } from '../dtos/user.email.dto';
 import { ConflictException } from '@nestjs/common';
-import { UserEditNicknameInputDto } from '../dtos/user.edit.nickname.dto';
+import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
+import { UserModifyPasswordDto } from '../dtos/user.modify.password.dto';
 
 @Injectable()
 export class UsersService {
@@ -93,6 +94,32 @@ export class UsersService {
     try {
       user.nickname = nickname;
       return await this.usersRepository.save(user);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  async modifyPassword(
+    user: UserEntity,
+    userModifyPasswordDto: UserModifyPasswordDto,
+  ) {
+    const { existPassword, password, checkPassword } = userModifyPasswordDto;
+    const userInfo = await this.usersRepository.findOne(user);
+    const validatePassword = await bcrypt.compare(
+      existPassword,
+      userInfo.password,
+    );
+    if (!validatePassword)
+      throw new ConflictException('비밀번호가 틀렸습니다.');
+
+    if (password !== checkPassword)
+      throw new ConflictException('비밀번호가 일치하지 않습니다.');
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      user.password = hashedPassword;
+      await this.usersRepository.save(user);
+      return this.userFilter(user);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
