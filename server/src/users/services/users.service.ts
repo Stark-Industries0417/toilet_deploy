@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserRegisterDto } from '../dtos/user.register.dto';
@@ -90,7 +90,11 @@ export class UsersService {
     });
     if (findNickname)
       throw new ConflictException('이미 사용중인 닉네임 입니다.');
-    user.nickname = nickname;
-    return await this.usersRepository.save(user);
+    try {
+      user.nickname = nickname;
+      return await this.usersRepository.save(user);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
   }
 }
