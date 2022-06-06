@@ -1,4 +1,3 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +8,8 @@ import { UserResponseDto } from '../dtos/user.response.dto';
 import { AwsService } from 'src/aws.service';
 import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserEmailDto } from '../dtos/user.email.dto';
+import { ConflictException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
@@ -39,15 +40,15 @@ export class UsersService {
     const hasEmail = await this.usersRepository.findOne({ email });
     const hasNickname = await this.usersRepository.findOne({ nickname });
     if (hasEmail) {
-      throw new UnauthorizedException('이미 가입된 이메일 입니다.');
+      throw new ConflictException('이미 가입된 이메일 입니다.');
     }
 
     if (password !== checkPassword) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+      throw new ConflictException('비밀번호가 일치하지 않습니다.');
     }
 
     if (hasNickname) {
-      throw new UnauthorizedException('이미 사용중인 닉네임 입니다.');
+      throw new ConflictException('이미 사용중인 닉네임 입니다.');
     }
     const imgUrl = this.userImg;
 
@@ -79,5 +80,13 @@ export class UsersService {
       imgUrl: user.imgUrl,
     };
     this.usersRepository.update(user.id, updateUser);
+  }
+
+  async modifyNickname(user, newNickname) {
+    const hasNickname = await this.usersRepository.findOne(newNickname);
+    if (hasNickname) {
+      throw new ConflictException('이미 사용중인 닉네임 입니다.');
+    }
+    this.usersRepository.update(user.id, newNickname);
   }
 }
