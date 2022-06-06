@@ -4,7 +4,12 @@ import { UploadedFile } from '@nestjs/common';
 import { Post, Patch } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
@@ -71,6 +76,7 @@ export class UsersController {
     type: UserResponseDto,
   })
   @ApiOperation({ summary: '현재 유저 정보' })
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Get()
   getCurrentUser(@Req() req: Request) {
@@ -117,7 +123,7 @@ export class UsersController {
   async resetPassword(@Body() passwords: UserResetPasswordDto) {
     return await this.usersService.resetPassword(this.email, passwords);
   }
-
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Patch('modify_nickname')
   @ApiOperation({ summary: '닉네임 수정' })
@@ -132,6 +138,7 @@ export class UsersController {
     );
   }
 
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOperation({ summary: '의도적으로 비밀번호 재설정' })
