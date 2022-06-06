@@ -17,9 +17,11 @@ import { UserRegisterDto } from '../dtos/user.register.dto';
 import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { UsersService } from '../services/users.service';
-import { UserEditNicknameInputDto } from '../dtos/user.edit.nickname.dto';
+
 import { User } from '../../common/decorators/user.decorator';
 import { UserEntity } from '../users.entity';
+import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
+import { UserModifyPasswordDto } from '../dtos/user.modify.password.dto';
 
 @Controller('api/users')
 @UseInterceptors(SuccessInterceptor)
@@ -118,6 +120,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('modify_nickname')
+  @ApiOperation({ summary: '닉네임 수정' })
   @ApiConsumes('application/x-www-form-urlencoded')
   async modifyNickname(
     @User() user: UserEntity,
@@ -127,5 +130,16 @@ export class UsersController {
       user,
       userEditNicknameInputDto,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiOperation({ summary: '의도적으로 비밀번호 재설정' })
+  @Patch('modify_password')
+  async modifyPassword(
+    @User() user: UserEntity,
+    @Body() userModifyPasswordDto: UserModifyPasswordDto,
+  ) {
+    return await this.usersService.modifyPassword(user, userModifyPasswordDto);
   }
 }
