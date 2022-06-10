@@ -11,6 +11,7 @@ import { UserEmailDto } from '../dtos/user.email.dto';
 import { ConflictException } from '@nestjs/common';
 import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
 import { UserModifyPasswordDto } from '../dtos/user.modify.password.dto';
+import { ValidationDto } from '../dtos/user.validation.dto';
 
 @Injectable()
 export class UsersService {
@@ -62,6 +63,14 @@ export class UsersService {
       imgUrl,
     });
     return this.userFilter(user);
+  }
+
+  async validation(validationDto: ValidationDto) {
+    const { email, password, checkPassword } = validationDto;
+    const hasEmail = await this.usersRepository.findOne({ where: { email } });
+    if (hasEmail) throw new ConflictException('이미 가입된 이메일 입니다.');
+    if (password !== checkPassword)
+      throw new ConflictException('비밀번호가 일치하지 않습니다.');
   }
 
   async resetPassword(email: UserEmailDto, passwords: UserResetPasswordDto) {
