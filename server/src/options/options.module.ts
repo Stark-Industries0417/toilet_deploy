@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ControllersController } from './controllers/options.controller';
-import { ServicesService } from './services/services.service';
+import { OptionsController } from './controllers/options.controller';
+import { OptionsService } from './services/options.service';
 
 @Module({
-  controllers: [ControllersController],
-  providers: [ServicesService],
+  controllers: [OptionsController],
+  providers: [OptionsService],
 })
 export class OptionsModule {}
