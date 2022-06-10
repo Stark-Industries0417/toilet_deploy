@@ -27,6 +27,7 @@ import { User } from '../../common/decorators/user.decorator';
 import { UserEntity } from '../users.entity';
 import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
 import { UserModifyPasswordDto } from '../dtos/user.modify.password.dto';
+import { ValidationDto } from '../dtos/user.validation.dto';
 
 @Controller('api/users')
 @UseInterceptors(SuccessInterceptor)
@@ -56,6 +57,21 @@ export class UsersController {
   @Post('register')
   signUp(@Body() userRegisterDto: UserRegisterDto) {
     return this.usersService.signUp(userRegisterDto);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: '성공 시 success true 반환',
+  })
+  @ApiResponse({
+    status: 409,
+    description: '실패 시 409 충돌',
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiOperation({ summary: '회원가입 이메알, 패스워드 유효성 검사' })
+  @Post('validation')
+  async validation(@Body() validationDto: ValidationDto) {
+    await this.usersService.validation(validationDto);
   }
 
   @ApiResponse({
