@@ -11,6 +11,9 @@ import { UserEntity } from './users/users.entity';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { ToiletsModule } from './toilets/toilets.module';
+import { OptionsModule } from './options/options.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (): Promise<TypeOrmModuleOptions> => ({
@@ -52,6 +55,9 @@ const typeOrmModuleOptions = {
     UsersModule,
     AuthModule,
     MailModule,
+    ReviewsModule,
+    ToiletsModule,
+    OptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
