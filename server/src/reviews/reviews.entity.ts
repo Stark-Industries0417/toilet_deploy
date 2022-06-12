@@ -20,7 +20,7 @@ export class ReviewEntity extends CommonEntity {
     description: '별점',
     required: true,
   })
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'int', nullable: false })
   rate: number;
 
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.reviews)
