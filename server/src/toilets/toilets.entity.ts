@@ -49,7 +49,7 @@ export class ToiletEntity extends CommonEntity {
     required: false,
   })
   @IsString()
-  @Column({ type: 'string', nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   toiletImg: string[];
 
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets)
