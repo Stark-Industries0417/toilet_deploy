@@ -32,6 +32,10 @@ export class AuthService {
 
     return {
       token: this.jwtService.sign(payload),
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
+      imgUrl: user.imgUrl,
     };
   }
 }
