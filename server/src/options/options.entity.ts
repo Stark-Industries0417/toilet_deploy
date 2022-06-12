@@ -27,7 +27,7 @@ export class OptionEntity extends CommonEntity {
     description: '양변기: 0, 좌변기: 1, 비데: 2',
     default: 0,
   })
-  @Column({ type: 'enum', nullable: false, default: 0 })
+  @Column({ type: 'enum', enum: [0, 1, 2], nullable: false, default: 0 })
   types: number;
 
   @ApiProperty({
