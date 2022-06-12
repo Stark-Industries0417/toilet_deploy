@@ -14,6 +14,9 @@ import { MailModule } from './mail/mail.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { ToiletsModule } from './toilets/toilets.module';
 import { OptionsModule } from './options/options.module';
+import { ToiletEntity } from './toilets/toilets.entity';
+import { ReviewEntity } from './reviews/reviews.entity';
+import { OptionEntity } from './options/options.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (): Promise<TypeOrmModuleOptions> => ({
@@ -24,7 +27,7 @@ const typeOrmModuleOptions = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [UserEntity],
+    entities: [UserEntity, ToiletEntity, ReviewEntity, OptionEntity],
     synchronize: true,
     autoLoadEntities: true,
     logging: true,
