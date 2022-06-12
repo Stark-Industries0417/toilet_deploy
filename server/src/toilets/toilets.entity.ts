@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { OptionEntity } from 'src/options/options.entity';
 import { ReviewEntity } from 'src/reviews/reviews.entity';
@@ -49,7 +49,7 @@ export class ToiletEntity extends CommonEntity {
     required: false,
   })
   @IsString()
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
   toiletImg: string[];
 
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets)
