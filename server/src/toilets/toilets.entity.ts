@@ -52,6 +52,14 @@ export class ToiletEntity extends CommonEntity {
   @Column({ type: 'varchar', nullable: true })
   toiletImg: string[];
 
+  @ApiProperty({
+    example: 0,
+    description: '화장실 삭제 요청 받은 횟수',
+    default: 0,
+  })
+  @Column({ type: 'int', nullable: true, default: 0 })
+  stack: number;
+
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets)
   @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
   author: UserEntity;
