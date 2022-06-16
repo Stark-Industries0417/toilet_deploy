@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { OptionEntity } from 'src/options/options.entity';
 import { ReviewEntity } from 'src/reviews/reviews.entity';
@@ -27,6 +27,22 @@ export class ToiletEntity extends CommonEntity {
   address: string;
 
   @ApiProperty({
+    example: '뫄뫄빌딩 2층 복도 끝',
+    description: '상세 주소',
+    required: true,
+  })
+  @IsString()
+  @Column({ type: 'varchar', nullable: false })
+  detailAddress: string;
+
+  @ApiProperty({
+    description: '카테고리: 0 -> 공용, 1 -> 지하철, 2 -> 기타',
+  })
+  @IsEnum([0, 1, 2])
+  @Column({ type: 'enum', enum: [0, 1, 2], nullable: true })
+  category: number;
+
+  @ApiProperty({
     example: '41.40338',
     description: '화장실 위도',
     required: true,
@@ -49,8 +65,16 @@ export class ToiletEntity extends CommonEntity {
     required: false,
   })
   @IsString()
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
   toiletImg: string[];
+
+  @ApiProperty({
+    example: 0,
+    description: '화장실 삭제 요청 받은 횟수',
+    default: 0,
+  })
+  @Column({ type: 'int', nullable: true, default: 0 })
+  stack: number;
 
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets)
   @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
