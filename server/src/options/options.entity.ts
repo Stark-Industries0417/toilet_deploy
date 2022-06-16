@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { Column, Entity } from 'typeorm';
 
@@ -27,6 +28,7 @@ export class OptionEntity extends CommonEntity {
     description: '양변기: 0, 좌변기: 1, 비데: 2',
     default: 0,
   })
+  @IsEnum([0, 1, 2])
   @Column({ type: 'enum', enum: [0, 1, 2], nullable: false, default: 0 })
   types: number;
 
