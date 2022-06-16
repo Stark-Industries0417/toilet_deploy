@@ -56,6 +56,7 @@ export class ToiletEntity extends CommonEntity {
     description: '화장실 경도',
     required: true,
   })
+  @IsNumber()
   @Column({ type: 'double', nullable: false })
   lng: number;
 
