@@ -3,7 +3,12 @@ import { UseInterceptors } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { userInfo } from 'os';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
@@ -16,6 +21,16 @@ import { ToiletsService } from '../services/toilets.service';
 export class ToiletsController {
   constructor(private readonly toiletsService: ToiletsService) {}
 
+  @ApiResponse({
+    status: 201,
+    description: 'success: true, 화장실 정보 반환',
+    type: ToiletAddDto,
+  })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiOperation({
+    summary: '화장실 추가 API',
+  })
   @UseGuards(JwtAuthGuard)
   @Post('additional')
   async toiletAdditional(
