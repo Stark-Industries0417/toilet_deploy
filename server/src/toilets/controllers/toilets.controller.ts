@@ -21,6 +21,25 @@ import { ToiletsService } from '../services/toilets.service';
 export class ToiletsController {
   constructor(private readonly toiletsService: ToiletsService) {}
 
+  @ApiOperation({
+    summary: '내 주변 화장실 정보',
+  })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiResponse({
+    status: 200,
+    description: '2km 이내 화장실들의 정보들 반환',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post('around_toilet')
+  async aroundToilet(@Body() userLocation) {
+    return this.toiletsService.aroundToilet(userInfo, userLocation);
+  }
+
   @ApiResponse({
     status: 201,
     description: 'success: true, 화장실 정보 반환',
