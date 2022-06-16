@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { OptionEntity } from 'src/options/options.entity';
 import { ReviewEntity } from 'src/reviews/reviews.entity';
@@ -25,6 +25,22 @@ export class ToiletEntity extends CommonEntity {
   @IsString()
   @Column({ type: 'varchar', unique: true, nullable: false })
   address: string;
+
+  @ApiProperty({
+    example: '뫄뫄빌딩 2층 복도 끝',
+    description: '상세 주소',
+    required: true,
+  })
+  @IsString()
+  @Column({ type: 'varchar', nullable: false })
+  detailAddress: string;
+
+  @ApiProperty({
+    description: '카테고리: 0 -> 공용, 1 -> 지하철, 2 -> 기타',
+  })
+  @IsEnum([0, 1, 2])
+  @Column({ type: 'enum', enum: [0, 1, 2], nullable: true })
+  category: number;
 
   @ApiProperty({
     example: '41.40338',
