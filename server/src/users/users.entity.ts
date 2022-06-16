@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
-import { Column, Entity, Index } from 'typeorm';
+import { ReviewEntity } from 'src/reviews/reviews.entity';
+import { ToiletEntity } from 'src/toilets/toilets.entity';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 
 @Index('email', ['email'], { unique: true })
 @Entity({
@@ -52,4 +53,14 @@ export class UserEntity extends CommonEntity {
     nullable: false,
   })
   imgUrl: string;
+
+  @OneToMany(() => ReviewEntity, (review: ReviewEntity) => review.author, {
+    cascade: true,
+  })
+  reviews: ReviewEntity[];
+
+  @OneToMany(() => ToiletEntity, (toilet: ToiletEntity) => toilet.author, {
+    cascade: true,
+  })
+  toilets: ToiletEntity[];
 }
