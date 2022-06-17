@@ -21,10 +21,13 @@ import { ReviewsService } from '../services/reviews.service';
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/reviews')
 export class ReviewsController {
+  toiletImgUrl;
   constructor(
     private readonly reviewsService: ReviewsService,
     private readonly awsService: AwsService,
-  ) {}
+  ) {
+    this.toiletImgUrl = null;
+  }
 
   @ApiOperation({
     summary: '리뷰 추가 페이지',
@@ -38,6 +41,29 @@ export class ReviewsController {
   @UseGuards(JwtAuthGuard)
   @Post('additional')
   async reviewAdditional(@User() user: UserEntity, @Body() reviewAddDto) {
-    return await this.reviewsService.additional(user.id, reviewAddDto);
+    return await this.reviewsService.additional(
+      user.id,
+      reviewAddDto,
+      this.toiletImgUrl,
+    );
+  }
+
+  @ApiOperation({
+    summary: '화장실 사진 업르도 API',
+    description: '사진 1장만 업로드 가능합니다',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'success: true 반환',
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  @Post('upload')
+  async uploadToiletImg(@UploadedFile() file: Express.Multer.File) {
+    const { key } = await this.awsService.uploadFileToS3('toilets', file);
+    const toiletImgUrl = this.awsService.getAwsS3FileUrl(key);
+    this.toiletImgUrl = toiletImgUrl;
   }
 }
