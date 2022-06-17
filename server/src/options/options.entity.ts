@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
+import { IsBoolean, IsEnum } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { Column, Entity } from 'typeorm';
 
@@ -12,6 +12,7 @@ export class OptionEntity extends CommonEntity {
     description: '남녀 공용 여부 default 값: false',
     default: false,
   })
+  @IsBoolean()
   @Column({ type: 'boolean', nullable: false, default: false })
   common: boolean;
 
@@ -20,6 +21,7 @@ export class OptionEntity extends CommonEntity {
     description: '자물쇠(비밀번호) 여부',
     default: false,
   })
+  @IsBoolean()
   @Column({ type: 'boolean', nullable: false, default: false })
   lock: boolean;
 
@@ -37,6 +39,7 @@ export class OptionEntity extends CommonEntity {
     description: '휴지 있으면 true, 없으면 false',
     default: true,
   })
+  @IsBoolean()
   @Column({ type: 'boolean', nullable: false, default: true })
   paper: boolean;
 
@@ -45,6 +48,7 @@ export class OptionEntity extends CommonEntity {
     description: '자판기 여부',
     default: false,
   })
+  @IsBoolean()
   @Column({ type: 'boolean', nullable: false, default: false })
   disabled: boolean;
 }
