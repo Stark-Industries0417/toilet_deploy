@@ -20,7 +20,7 @@ export class ReviewsService {
     private readonly optionReposotiry: Repository<OptionEntity>,
   ) {}
 
-  async additional(id, reviewAddDto) {
+  async additional(id, reviewAddDto, toiletImgUrl) {
     const { address, common, lock, types, paper, disabled, rate, content } =
       reviewAddDto;
 
@@ -45,9 +45,11 @@ export class ReviewsService {
         where: { address },
         relations: ['reviews', 'option'],
       });
-      user.reviews.push(review);
+      toilet.toiletImg = toiletImgUrl;
       toilet.reviews.push(review);
       toilet.option = option;
+
+      user.reviews.push(review);
 
       Promise.all([
         await this.usersRepository.save(user),
