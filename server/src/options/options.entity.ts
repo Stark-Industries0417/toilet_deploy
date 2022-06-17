@@ -46,5 +46,5 @@ export class OptionEntity extends CommonEntity {
     default: false,
   })
   @Column({ type: 'boolean', nullable: false, default: false })
-  vending: boolean;
+  disabled: boolean;
 }
