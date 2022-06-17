@@ -6,6 +6,7 @@ import { Controller } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiResponse,
@@ -103,8 +104,18 @@ export class UsersController {
     status: 200,
     description: '유저 프로필 이미지 url 반환',
   })
-  @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiConsumes('application/json')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: '유저 이미지 업로드' })
   @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
