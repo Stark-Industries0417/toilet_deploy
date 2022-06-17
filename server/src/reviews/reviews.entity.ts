@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { OptionEntity } from 'src/options/options.entity';
 import { ToiletEntity } from 'src/toilets/toilets.entity';
@@ -13,6 +14,7 @@ export class ReviewEntity extends CommonEntity {
     description: '리뷰 글',
     required: true,
   })
+  @IsString()
   @Column({ type: 'text', nullable: false })
   content: string;
 
@@ -20,6 +22,7 @@ export class ReviewEntity extends CommonEntity {
     description: '별점',
     required: true,
   })
+  @IsNumber()
   @Column({ type: 'int', nullable: false })
   rate: number;
 

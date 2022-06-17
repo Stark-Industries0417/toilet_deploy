@@ -7,6 +7,7 @@ import { Controller } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiResponse,
@@ -16,6 +17,7 @@ import { AwsService } from 'src/aws.service';
 import { User } from 'src/common/decorators/user.decorator';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { UserEntity } from 'src/users/users.entity';
+import { ReviewAddDto } from '../dtos/review.add.dto';
 import { ReviewsService } from '../services/reviews.service';
 
 @UseInterceptors(SuccessInterceptor)
@@ -40,7 +42,10 @@ export class ReviewsController {
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Post('additional')
-  async reviewAdditional(@User() user: UserEntity, @Body() reviewAddDto) {
+  async reviewAdditional(
+    @User() user: UserEntity,
+    @Body() reviewAddDto: ReviewAddDto,
+  ) {
     return await this.reviewsService.additional(
       user.id,
       reviewAddDto,
@@ -49,7 +54,7 @@ export class ReviewsController {
   }
 
   @ApiOperation({
-    summary: '화장실 사진 업르도 API',
+    summary: '화장실 사진 업로드 API',
     description: '사진 1장만 업로드 가능합니다',
   })
   @ApiResponse({
@@ -57,6 +62,18 @@ export class ReviewsController {
     description: 'success: true 반환',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
