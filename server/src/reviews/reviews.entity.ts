@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsInt, IsNumber, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { OptionEntity } from 'src/options/options.entity';
 import { ToiletEntity } from 'src/toilets/toilets.entity';
@@ -13,6 +15,7 @@ export class ReviewEntity extends CommonEntity {
     description: '리뷰 글',
     required: true,
   })
+  @IsString()
   @Column({ type: 'text', nullable: false })
   content: string;
 
@@ -20,8 +23,14 @@ export class ReviewEntity extends CommonEntity {
     description: '별점',
     required: true,
   })
+  @Type(() => Number)
+  @IsInt()
   @Column({ type: 'int', nullable: false })
   rate: number;
+
+  @IsString()
+  @Column({ type: 'varchar', nullable: true })
+  toiletImg: string;
 
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.reviews)
   @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
