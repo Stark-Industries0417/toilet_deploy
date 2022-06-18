@@ -43,11 +43,11 @@ export class ReviewsController {
   @UseGuards(JwtAuthGuard)
   @Post('additional')
   async reviewAdditional(
-    @User() user: UserEntity,
+    @User() userInfo: UserEntity,
     @Body() reviewAddDto: ReviewAddDto,
   ) {
     return await this.reviewsService.additional(
-      user.id,
+      userInfo,
       reviewAddDto,
       this.toiletImgUrl,
     );

@@ -1,5 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsString } from 'class-validator';
 import { OptionEntity } from 'src/options/options.entity';
 import { Column } from 'typeorm';
 
@@ -31,7 +32,8 @@ export class ReviewAddDto extends PickType(OptionEntity, [
     description: '별점',
     required: true,
   })
-  @IsNumber()
+  @IsInt()
+  @Type(() => Number)
   @Column({ type: 'int', nullable: false })
   rate: number;
 }

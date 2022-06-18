@@ -65,10 +65,6 @@ export class ToiletEntity extends CommonEntity {
     description: '화장실 이미지',
     required: false,
   })
-  @IsString()
-  @Column({ type: 'varchar', nullable: true })
-  toiletImg: string[];
-
   @ApiProperty({
     example: 0,
     description: '화장실 삭제 요청 받은 횟수',
