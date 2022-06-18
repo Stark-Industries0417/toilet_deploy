@@ -5,6 +5,7 @@ import { OptionEntity } from 'src/options/options.entity';
 import { ToiletEntity } from 'src/toilets/toilets.entity';
 import { UserEntity } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
+import { ReviewAddDto } from '../dtos/review.add.dto';
 import { ReviewEntity } from '../reviews.entity';
 
 @Injectable()
@@ -20,7 +21,11 @@ export class ReviewsService {
     private readonly optionReposotiry: Repository<OptionEntity>,
   ) {}
 
-  async additional(id, reviewAddDto, toiletImgUrl) {
+  async additional(
+    userInfo: UserEntity,
+    reviewAddDto: ReviewAddDto,
+    toiletImgUrl: string,
+  ) {
     const { address, common, lock, types, paper, disabled, rate, content } =
       reviewAddDto;
 
@@ -36,16 +41,16 @@ export class ReviewsService {
       review.rate = rate;
       review.content = content;
       review.option = option;
+      review.toiletImg = toiletImgUrl;
 
       const user = await this.usersRepository.findOne({
-        where: { id },
+        where: { id: userInfo.id },
         relations: ['reviews'],
       });
       const toilet = await this.toiletsRepository.findOne({
         where: { address },
         relations: ['reviews', 'option'],
       });
-      toilet.toiletImg = toiletImgUrl;
       toilet.reviews.push(review);
       toilet.option = option;
 
