@@ -14,6 +14,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { UserEntity } from 'src/users/users.entity';
 import { ToiletAddDto } from '../dtos/toilet.add.dto';
+import { ToiletAroundDto } from '../dtos/toilet.around.dto';
 import { ToiletsService } from '../services/toilets.service';
 
 @UseInterceptors(SuccessInterceptor)
@@ -22,13 +23,14 @@ export class ToiletsController {
   constructor(private readonly toiletsService: ToiletsService) {}
 
   @ApiOperation({
-    summary: '내 주변 화장실 정보',
+    summary:
+      '내 주변 화장실 정보와 옵션 정보 API, 테스트 하실 때 화장실 먼저 추가하셔야 합니다',
   })
   @ApiBearerAuth('access-token')
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiResponse({
     status: 200,
-    description: '2km 이내 화장실들의 정보들 반환',
+    description: '요청해준 km 이내 화장실들의 정보들 반환',
   })
   @ApiResponse({
     status: 500,
@@ -36,8 +38,8 @@ export class ToiletsController {
   })
   @UseGuards(JwtAuthGuard)
   @Post('around_toilet')
-  async aroundToilet(@Body() userLocation) {
-    return this.toiletsService.aroundToilet(userInfo, userLocation);
+  async aroundToilet(@Body() userLocation: ToiletAroundDto) {
+    return this.toiletsService.aroundToilet(userLocation);
   }
 
   @ApiResponse({
