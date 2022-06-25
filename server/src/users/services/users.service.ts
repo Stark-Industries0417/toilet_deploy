@@ -121,9 +121,9 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
-      user.password = hashedPassword;
-      await this.usersRepository.save(user);
-      return this.userFilter(user);
+      userInfo.password = hashedPassword;
+      await this.usersRepository.save(userInfo);
+      return this.userFilter(userInfo);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
