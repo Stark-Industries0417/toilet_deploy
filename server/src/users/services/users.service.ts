@@ -64,12 +64,16 @@ export class UsersService {
     return this.userFilter(user);
   }
 
-  async validation(validationDto: ValidationDto) {
-    const { email, password, checkPassword } = validationDto;
-    const hasEmail = await this.usersRepository.findOne({ where: { email } });
-    if (hasEmail) throw new ConflictException('이미 가입된 이메일 입니다.');
-    if (password !== checkPassword)
-      throw new ConflictException('비밀번호가 일치하지 않습니다.');
+  async checkEmail(userEmailDto: UserEmailDto) {
+    try {
+      const hasEmail = await this.usersRepository.findOne({
+        where: userEmailDto,
+      });
+      if (hasEmail) throw new ConflictException('이미 가입된 이메일 입니다.');
+      return '가입 가능한 이메일 입니다.';
+    } catch (err) {
+      throw new ConflictException(err.message);
+    }
   }
 
   async modifyNickname(

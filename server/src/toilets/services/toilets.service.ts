@@ -20,20 +20,22 @@ export class ToiletsService {
     const { lat, lng, dist } = userLocation;
     const toilets = await this.toiletsRepository.query(`
         SELECT
-          t.*, (
-          6371 * acos (
-          cos ( radians(${lat}) )
-          * cos( radians( t.lat ) )
-          * cos( radians( t.lng ) - radians(${lng}) )
-          + sin ( radians(${lat}) )
-          * sin( radians( t.lat ) )
+        t.*, (
+        6371 * acos (
+        cos ( radians(${lat}) )
+        * cos( radians( t.lat ) )
+        * cos( radians( t.lng ) - radians(${lng}) )
+        + sin ( radians(${lat}) )
+        * sin( radians( t.lat ) )
         )
-        ) AS distance, o.*
-        FROM toilet.TOILET as t, toilet.OPTION as o
-        WHERE t.option_id = o.id
+        ) AS distance,
+        o.*
+        FROM toilet.TOILET as t
+        LEFT OUTER JOIN toilet.OPTION as o
+        ON t.option_id = o.id
         HAVING distance < ${dist}
         ORDER BY distance
-        LIMIT 0 , 20;`);
+        LIMIT 0, 20;`);
 
     return toilets;
   }

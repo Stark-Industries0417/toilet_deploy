@@ -24,7 +24,7 @@ export class ToiletAroundDto {
     description: '몇 Km 이내 화장실 가져올지',
     required: true,
   })
-  @IsInt()
+  @IsNumber()
   @Type(() => Number)
   dist: number;
 }
