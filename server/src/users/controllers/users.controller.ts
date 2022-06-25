@@ -20,15 +20,14 @@ import { MailService } from 'src/mail/mail.service';
 import { UserEmailDto } from '../dtos/user.email.dto';
 import { UserLoginDto } from '../dtos/user.login.dto';
 import { UserRegisterDto } from '../dtos/user.register.dto';
-import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { UsersService } from '../services/users.service';
 
 import { User } from '../../common/decorators/user.decorator';
 import { UserEntity } from '../users.entity';
 import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
-import { UserModifyPasswordDto } from '../dtos/user.modify.password.dto';
 import { ValidationDto } from '../dtos/user.validation.dto';
+import { UserModifyPasswordDto } from '../dtos/user.modifyPassword.dto';
 
 @Controller('api/users')
 @UseInterceptors(SuccessInterceptor)
@@ -142,14 +141,25 @@ export class UsersController {
 
   @ApiResponse({
     status: 200,
-    description: 'success: true 반환',
+    description: '기존 비밀번호와 같습니다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '비밀번호 수정 성공',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiOperation({ summary: '이메일로 받은 링크로 접속한 페이지의 API' })
+  @ApiOperation({
+    summary:
+      '1. redirect API로 먼저 이메일 보내야 합니다. 2.이메일로 받은 링크로 접속한 페이지의 API',
+  })
   @Patch('reset_password')
-  async resetPassword(@Body() passwords: UserResetPasswordDto) {
-    return await this.usersService.resetPassword(this.email, passwords);
+  async resetPassword(@Body() userModifyPasswordDto: UserModifyPasswordDto) {
+    return await this.usersService.modifyPassword(
+      userModifyPasswordDto,
+      this.email,
+    );
   }
+
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Patch('modify_nickname')
@@ -165,6 +175,14 @@ export class UsersController {
     );
   }
 
+  @ApiResponse({
+    status: 200,
+    description: '기존 비밀번호와 같습니다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '비밀번호 수정 성공',
+  })
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @ApiConsumes('application/x-www-form-urlencoded')
@@ -174,6 +192,10 @@ export class UsersController {
     @User() user: UserEntity,
     @Body() userModifyPasswordDto: UserModifyPasswordDto,
   ) {
-    return await this.usersService.modifyPassword(user, userModifyPasswordDto);
+    return await this.usersService.modifyPassword(
+      userModifyPasswordDto,
+      this.email,
+      user,
+    );
   }
 }
