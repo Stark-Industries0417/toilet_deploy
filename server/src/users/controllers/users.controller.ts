@@ -68,10 +68,10 @@ export class UsersController {
     description: '실패 시 409 충돌',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  @ApiOperation({ summary: '회원가입 이메알, 패스워드 유효성 검사' })
-  @Post('validation')
-  async validation(@Body() validationDto: ValidationDto) {
-    await this.usersService.validation(validationDto);
+  @ApiOperation({ summary: '이메일 유효성 검사' })
+  @Post('check_email')
+  async checkEmail(@Body() userEmailDto: UserEmailDto) {
+    return await this.usersService.checkEmail(userEmailDto);
   }
 
   @ApiResponse({
