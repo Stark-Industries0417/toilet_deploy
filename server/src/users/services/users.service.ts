@@ -6,12 +6,11 @@ import { UserEntity } from '../users.entity';
 import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { AwsService } from 'src/aws.service';
-import { UserResetPasswordDto } from '../dtos/user.resetPassword.dto';
-import { UserEmailDto } from '../dtos/user.email.dto';
 import { ConflictException } from '@nestjs/common';
 import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
-import { UserModifyPasswordDto } from '../dtos/user.modify.password.dto';
 import { ValidationDto } from '../dtos/user.validation.dto';
+import { UserModifyPasswordDto } from '../dtos/user.modifyPassword.dto';
+import { UserEmailDto } from '../dtos/user.email.dto';
 
 @Injectable()
 export class UsersService {
@@ -73,24 +72,6 @@ export class UsersService {
       throw new ConflictException('비밀번호가 일치하지 않습니다.');
   }
 
-  async resetPassword(email: UserEmailDto, passwords: UserResetPasswordDto) {
-    const user = await this.usersRepository.findOne({ where: { email } });
-    if (!user) throw new ConflictException('존재하지 않는 이메일 입니다.');
-
-    const { password, checkPassword } = passwords;
-    if (password !== checkPassword)
-      throw new ConflictException('비밀번호가 일치하지 않습니다.');
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const updateUser = {
-      email: user.email,
-      password: hashedPassword,
-      nickname: user.nickname,
-      imgUrl: user.imgUrl,
-    };
-    await this.usersRepository.update(user.id, updateUser);
-  }
-
   async modifyNickname(
     user: UserEntity,
     { nickname }: UserEditNicknameInputDto,
@@ -109,17 +90,27 @@ export class UsersService {
   }
 
   async modifyPassword(
-    user: UserEntity,
     userModifyPasswordDto: UserModifyPasswordDto,
+    email: UserEmailDto,
+    user?: UserEntity,
   ) {
     const { existPassword, password, checkPassword } = userModifyPasswordDto;
-    const userInfo = await this.usersRepository.findOne(user);
-    const validatePassword = await bcrypt.compare(
-      existPassword,
-      userInfo.password,
-    );
-    if (!validatePassword)
-      throw new ConflictException('비밀번호가 틀렸습니다.');
+
+    const userInfo = await this.usersRepository.findOne(user ? user : email);
+
+    const samePassword = await bcrypt.compare(password, userInfo.password);
+
+    if (samePassword) {
+      return '기존 비밀번호와 같습니다.';
+    }
+    if (existPassword) {
+      const validatePassword = await bcrypt.compare(
+        existPassword,
+        userInfo.password,
+      );
+      if (!validatePassword)
+        throw new ConflictException('비밀번호가 틀렸습니다.');
+    }
 
     if (password !== checkPassword)
       throw new ConflictException('비밀번호가 일치하지 않습니다.');
