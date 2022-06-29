@@ -15,6 +15,7 @@ import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor'
 import { UserEntity } from 'src/users/users.entity';
 import { ToiletAddDto } from '../dtos/toilet.add.dto';
 import { ToiletAroundDto } from '../dtos/toilet.around.dto';
+import { ToiletReportDto } from '../dtos/toilet.report.dto';
 import { ToiletsService } from '../services/toilets.service';
 
 @UseInterceptors(SuccessInterceptor)
@@ -59,5 +60,24 @@ export class ToiletsController {
     @Body() toiletAddDto: ToiletAddDto,
   ) {
     return await this.toiletsService.toiletAdditional(userInfo, toiletAddDto);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'success true 반환',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiOperation({
+    summary: '화장실 신고 API',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post('report')
+  async toiletReport(toiletReportDto: ToiletReportDto) {
+    return await this.toiletsService.toiletReport(toiletReportDto);
   }
 }
