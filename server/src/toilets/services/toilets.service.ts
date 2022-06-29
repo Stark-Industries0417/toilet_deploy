@@ -22,26 +22,30 @@ export class ToiletsService {
 
   async aroundToilet(userLocation: ToiletAroundDto) {
     const { lat, lng, dist } = userLocation;
-    const toilets = await this.toiletsRepository.query(`
-        SELECT
-        t.*, (
-        6371 * acos (
-        cos ( radians(${lat}) )
-        * cos( radians( t.lat ) )
-        * cos( radians( t.lng ) - radians(${lng}) )
-        + sin ( radians(${lat}) )
-        * sin( radians( t.lat ) )
-        )
-        ) AS distance,
-        o.*
-        FROM toilet.TOILET as t
-        LEFT OUTER JOIN toilet.OPTION as o
-        ON t.option_id = o.id
-        HAVING distance < ${dist}
-        ORDER BY distance
-        LIMIT 0, 20;`);
+    try {
+      const toilets = await this.toiletsRepository.query(`
+          SELECT
+          t.*, (
+          6371 * acos (
+          cos ( radians(${lat}) )
+          * cos( radians( t.lat ) )
+          * cos( radians( t.lng ) - radians(${lng}) )
+          + sin ( radians(${lat}) )
+          * sin( radians( t.lat ) )
+          )
+          ) AS distance,
+          o.*
+          FROM toilet.TOILET as t
+          LEFT OUTER JOIN toilet.OPTION as o
+          ON t.option_id = o.id
+          HAVING distance < ${dist}
+          ORDER BY distance
+          LIMIT 0, 20;`);
 
-    return toilets;
+      return toilets;
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
   }
 
   async toiletAdditional(userInfo: UserEntity, toiletAddDto: ToiletAddDto) {

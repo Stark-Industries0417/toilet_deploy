@@ -77,7 +77,7 @@ export class ToiletsController {
   })
   @UseGuards(JwtAuthGuard)
   @Post('report')
-  async toiletReport(toiletReportDto: ToiletReportDto) {
+  async toiletReport(@Body() toiletReportDto: ToiletReportDto) {
     return await this.toiletsService.toiletReport(toiletReportDto);
   }
 }
