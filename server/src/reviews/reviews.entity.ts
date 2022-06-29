@@ -36,7 +36,9 @@ export class ReviewEntity extends CommonEntity {
   @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
   author: UserEntity;
 
-  @ManyToOne(() => ToiletEntity, (toilet: ToiletEntity) => toilet.reviews)
+  @ManyToOne(() => ToiletEntity, (toilet: ToiletEntity) => toilet.reviews, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'toilet_id', referencedColumnName: 'id' })
   toilet: ToiletEntity;
 
