@@ -50,7 +50,7 @@ export class OptionEntity extends CommonEntity {
 
   @ApiProperty({
     example: true,
-    description: '자판기 여부',
+    description: '장애인 화장실 여부',
     default: false,
   })
   @Type(() => Boolean)
