@@ -1,4 +1,4 @@
-import { Body } from '@nestjs/common';
+import { Body, Delete, Param } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
@@ -16,6 +16,7 @@ import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { AwsService } from 'src/aws.service';
 import { User } from 'src/common/decorators/user.decorator';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
+import { ToiletEntity } from 'src/toilets/toilets.entity';
 import { UserEntity } from 'src/users/users.entity';
 import { ReviewAddDto } from '../dtos/review.add.dto';
 import { ReviewsService } from '../services/reviews.service';
@@ -81,5 +82,18 @@ export class ReviewsController {
     const { key } = await this.awsService.uploadFileToS3('toilets', file);
     const toiletImgUrl = this.awsService.getAwsS3FileUrl(key);
     this.toiletImgUrl = toiletImgUrl;
+  }
+
+  @ApiOperation({ summary: '리뷰 삭제 api' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    type: ToiletEntity,
+  })
+  @Delete('delete/:id')
+  async reviewDelete(@Param('id') id: string) {
+    return await this.reviewsService.reviewDelete(id);
   }
 }
