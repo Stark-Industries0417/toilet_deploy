@@ -1,4 +1,4 @@
-import { Body, Delete, Param } from '@nestjs/common';
+import { Body, Delete, Param, Patch } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
@@ -83,6 +83,20 @@ export class ReviewsController {
     const toiletImgUrl = this.awsService.getAwsS3FileUrl(key);
     this.toiletImgUrl = toiletImgUrl;
   }
+
+  @ApiOperation({ summary: '리뷰 수정 api' })
+  @ApiResponse({
+    status: 200,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  async reviewModify() {}
 
   @ApiOperation({ summary: '리뷰 삭제 api' })
   @ApiConsumes('application/x-www-form-urlencoded')
