@@ -103,7 +103,7 @@ export class ReviewsService {
         LIMIT 1;
       `);
 
-      if (hasReview) {
+      if (hasReview[0]) {
         toilet.option = hasReview[0].option_id;
       } else {
         toilet.option = null;
