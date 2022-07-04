@@ -87,7 +87,8 @@ export class ToiletEntity extends CommonEntity {
   reviews: ReviewEntity[];
 
   @OneToOne(() => OptionEntity, {
-    cascade: true,
+    createForeignKeyConstraints: false,
+    nullable: true,
   })
   @JoinColumn()
   option: OptionEntity;

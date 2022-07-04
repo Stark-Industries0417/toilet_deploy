@@ -65,4 +65,36 @@ export class ReviewsService {
       throw new InternalServerErrorException(err.message);
     }
   }
+
+  async reviewDelete(id: string) {
+    try {
+      const review = await this.reviewsRepository.findOne({
+        where: { id },
+        relations: ['option', 'toilet'],
+      });
+
+      const toilet = await this.toiletsRepository.findOne({
+        where: { id: review.toilet.id },
+      });
+
+      await this.optionReposotiry.remove(review.option);
+
+      const hasReview = await this.reviewsRepository.query(`
+        SELECT *
+        FROM toilet.REVIEW
+        WHERE toilet_id = '${review.toilet.id}'
+        ORDER BY created_at DESC
+        LIMIT 1;
+      `);
+
+      if (hasReview) {
+        toilet.option = hasReview[0].option_id;
+      } else {
+        toilet.option = null;
+      }
+      return await this.toiletsRepository.save(toilet);
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
 }

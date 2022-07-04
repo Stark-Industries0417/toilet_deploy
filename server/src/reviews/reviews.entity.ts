@@ -42,7 +42,9 @@ export class ReviewEntity extends CommonEntity {
   @JoinColumn({ name: 'toilet_id', referencedColumnName: 'id' })
   toilet: ToiletEntity;
 
-  @OneToOne(() => OptionEntity)
+  @OneToOne(() => OptionEntity, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   option: OptionEntity;
 }

@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
-import { Column, Entity } from 'typeorm';
+import { ReviewEntity } from 'src/reviews/reviews.entity';
+import { Column, Entity, OneToOne } from 'typeorm';
 
 @Entity({
   name: 'OPTION',
@@ -50,11 +51,16 @@ export class OptionEntity extends CommonEntity {
 
   @ApiProperty({
     example: true,
-    description: '자판기 여부',
+    description: '장애인 화장실 여부',
     default: false,
   })
   @Type(() => Boolean)
   @IsBoolean()
   @Column({ type: 'boolean', nullable: false, default: false })
   disabled: boolean;
+
+  @OneToOne(() => ReviewEntity, {
+    cascade: true,
+  })
+  review: ReviewEntity;
 }
