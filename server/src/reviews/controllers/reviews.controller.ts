@@ -1,4 +1,4 @@
-import { Body, Delete, Param } from '@nestjs/common';
+import { Body, Delete, Get, Param } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
@@ -19,6 +19,7 @@ import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor'
 import { ToiletEntity } from 'src/toilets/toilets.entity';
 import { UserEntity } from 'src/users/users.entity';
 import { ReviewAddDto } from '../dtos/review.add.dto';
+import { ReviewEntity } from '../reviews.entity';
 import { ReviewsService } from '../services/reviews.service';
 
 @UseInterceptors(SuccessInterceptor)
@@ -83,6 +84,23 @@ export class ReviewsController {
     const { key } = await this.awsService.uploadFileToS3('toilets', file);
     const toiletImgUrl = this.awsService.getAwsS3FileUrl(key);
     this.toiletImgUrl = toiletImgUrl;
+  }
+
+  @ApiOperation({ summary: '사용자가 작성한 리뷰 get' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    type: [ReviewEntity],
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @Get()
+  async getUserReview(@User() userInfo: UserEntity): Promise<ReviewEntity[]> {
+    return await this.reviewsService.getUserReview(userInfo);
   }
 
   @ApiOperation({ summary: '리뷰 삭제 api' })

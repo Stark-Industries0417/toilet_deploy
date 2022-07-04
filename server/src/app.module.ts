@@ -32,6 +32,7 @@ const typeOrmModuleOptions = {
     autoLoadEntities: true,
     logging: true,
     keepConnectionAlive: true,
+    timezone: 'Z',
   }),
 };
 

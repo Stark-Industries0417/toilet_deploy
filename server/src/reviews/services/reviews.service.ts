@@ -66,6 +66,22 @@ export class ReviewsService {
     }
   }
 
+  async getUserReview(userInfo: UserEntity): Promise<ReviewEntity[]> {
+    try {
+      const reviews = await this.reviewsRepository.query(`
+      SELECT id, rate, content, toilet_img,
+      DATE_FORMAT(CONVERT_TZ(created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as time
+      FROM toilet.REVIEW
+      WHERE author_id = '${userInfo.id}'
+      ORDER BY created_at DESC
+      `);
+
+      return reviews;
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
   async reviewDelete(id: string) {
     try {
       const review = await this.reviewsRepository.findOne({
