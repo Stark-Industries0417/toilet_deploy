@@ -29,7 +29,7 @@ import { ReviewsService } from '../services/reviews.service';
 @Controller('api/reviews')
 @ApiTags('REVIEW')
 export class ReviewsController {
-  toiletImgUrl;
+  toiletImgUrl: string;
   constructor(
     private readonly reviewsService: ReviewsService,
     private readonly awsService: AwsService,
@@ -51,7 +51,7 @@ export class ReviewsController {
   async reviewAdditional(
     @User() userInfo: UserEntity,
     @Body() reviewAddDto: ReviewAddDto,
-  ) {
+  ): Promise<ReviewEntity> {
     return await this.reviewsService.additional(
       userInfo,
       reviewAddDto,

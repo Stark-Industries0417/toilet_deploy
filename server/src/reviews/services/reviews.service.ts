@@ -27,10 +27,9 @@ export class ReviewsService {
     userInfo: UserEntity,
     reviewAddDto: ReviewAddDto,
     toiletImgUrl: string,
-  ) {
+  ): Promise<ReviewEntity> {
     const { address, common, lock, types, paper, disabled, rate, content } =
       reviewAddDto;
-
     try {
       const option = await this.optionReposotiry.save({
         common,

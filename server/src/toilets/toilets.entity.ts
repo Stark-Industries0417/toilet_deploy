@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { OptionEntity } from 'src/options/options.entity';
 import { ReviewEntity } from 'src/reviews/reviews.entity';
@@ -30,10 +30,10 @@ export class ToiletEntity extends CommonEntity {
   @ApiProperty({
     example: '뫄뫄빌딩 2층 복도 끝',
     description: '상세 주소',
-    required: true,
   })
+  @IsOptional()
   @IsString()
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: true })
   detailAddress: string;
 
   @ApiProperty({
@@ -43,6 +43,17 @@ export class ToiletEntity extends CommonEntity {
   @IsEnum([0, 1, 2])
   @Column({ type: 'enum', enum: [0, 1, 2], nullable: true })
   category: number;
+
+  @ApiProperty({
+    example: 0,
+    description:
+      '카테고리가 1인 경우 가질 수 있는 값으로 개찰구 안: 0, 개찰구 밖: 1',
+  })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  @Column({ type: 'enum', enum: [0, 1], nullable: true, default: null })
+  subway: number;
 
   @ApiProperty({
     example: '41.40338',

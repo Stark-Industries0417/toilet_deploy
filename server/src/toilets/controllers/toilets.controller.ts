@@ -18,6 +18,7 @@ import { ToiletAddDto } from '../dtos/toilet.add.dto';
 import { ToiletAroundDto } from '../dtos/toilet.around.dto';
 import { ToiletReportDto } from '../dtos/toilet.report.dto';
 import { ToiletsService } from '../services/toilets.service';
+import { ToiletEntity } from '../toilets.entity';
 
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/toilets')
@@ -60,7 +61,7 @@ export class ToiletsController {
   async toiletAdditional(
     @User() userInfo: UserEntity,
     @Body() toiletAddDto: ToiletAddDto,
-  ) {
+  ): Promise<ToiletEntity> {
     return await this.toiletsService.toiletAdditional(userInfo, toiletAddDto);
   }
 
