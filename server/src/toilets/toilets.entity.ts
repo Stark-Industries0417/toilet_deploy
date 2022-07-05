@@ -30,7 +30,6 @@ export class ToiletEntity extends CommonEntity {
   @ApiProperty({
     example: '뫄뫄빌딩 2층 복도 끝',
     description: '상세 주소',
-    required: false,
   })
   @IsOptional()
   @IsString()
@@ -49,12 +48,11 @@ export class ToiletEntity extends CommonEntity {
     example: 0,
     description:
       '카테고리가 1인 경우 가질 수 있는 값으로 개찰구 안: 0, 개찰구 밖: 1',
-    required: false,
   })
   @IsOptional()
   @IsInt()
   @Type(() => Number)
-  @Column({ type: 'enum', enum: [0, 1], nullable: true })
+  @Column({ type: 'enum', enum: [0, 1], nullable: true, default: null })
   subway: number;
 
   @ApiProperty({
