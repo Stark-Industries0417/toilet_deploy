@@ -48,14 +48,19 @@ export class ToiletsService {
     }
   }
 
-  async toiletAdditional(userInfo: UserEntity, toiletAddDto: ToiletAddDto) {
-    const { address, detailAddress, lat, lng, category } = toiletAddDto;
+  async toiletAdditional(
+    userInfo: UserEntity,
+    toiletAddDto: ToiletAddDto,
+  ): Promise<ToiletEntity> {
+    const { address, detailAddress, lat, lng, category, subway } = toiletAddDto;
+    console.log(toiletAddDto);
     const toilet = new ToiletEntity();
     toilet.address = address;
     toilet.detailAddress = detailAddress;
     toilet.lat = lat;
     toilet.lng = lng;
     toilet.category = category;
+    toilet.subway = subway;
 
     try {
       const author = await this.usersRepository.findOne({
