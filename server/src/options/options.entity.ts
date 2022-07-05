@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum } from 'class-validator';
+import { IsArray, IsBoolean } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { ReviewEntity } from 'src/reviews/reviews.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
@@ -32,12 +32,11 @@ export class OptionEntity extends CommonEntity {
   @ApiProperty({
     example: 0,
     description: '양변기: 0, 좌변기: 1, 비데: 2',
-    default: 0,
   })
-  @Type(() => Number)
-  @IsEnum([0, 1, 2])
-  @Column({ type: 'enum', enum: [0, 1, 2], nullable: false, default: 0 })
-  types: number;
+  @Type(() => Array)
+  @IsArray()
+  @Column('simple-array')
+  types: number[];
 
   @ApiProperty({
     example: true,
