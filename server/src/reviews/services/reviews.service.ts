@@ -69,11 +69,11 @@ export class ReviewsService {
   async getUserReview(userInfo: UserEntity): Promise<ReviewEntity[]> {
     try {
       const reviews = await this.reviewsRepository.query(`
-      SELECT id, rate, content, toilet_img,
-      DATE_FORMAT(CONVERT_TZ(created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as time
-      FROM toilet.REVIEW
-      WHERE author_id = '${userInfo.id}'
-      ORDER BY created_at DESC
+      SELECT review.id, toilet.address, rate, content, toilet_img,
+      DATE_FORMAT(CONVERT_TZ(review.created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as time
+      FROM toilet.REVIEW as review, toilet.TOILET as toilet
+      WHERE review.author_id = '${userInfo.id}' and review.toilet_id = toilet.id
+      ORDER BY review.created_at DESC
       `);
 
       return reviews;
