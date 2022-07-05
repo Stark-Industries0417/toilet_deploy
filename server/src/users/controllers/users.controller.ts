@@ -10,6 +10,7 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
@@ -26,10 +27,10 @@ import { UsersService } from '../services/users.service';
 import { User } from '../../common/decorators/user.decorator';
 import { UserEntity } from '../users.entity';
 import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
-import { ValidationDto } from '../dtos/user.validation.dto';
 import { UserModifyPasswordDto } from '../dtos/user.modifyPassword.dto';
 
 @Controller('api/users')
+@ApiTags('USER')
 @UseInterceptors(SuccessInterceptor)
 export class UsersController {
   email: UserEmailDto;

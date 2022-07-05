@@ -11,6 +11,7 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { AwsService } from 'src/aws.service';
@@ -24,6 +25,7 @@ import { ReviewsService } from '../services/reviews.service';
 
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/reviews')
+@ApiTags('REVIEW')
 export class ReviewsController {
   toiletImgUrl;
   constructor(
