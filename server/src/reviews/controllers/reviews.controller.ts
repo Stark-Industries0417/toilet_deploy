@@ -1,4 +1,4 @@
-import { Body, Delete, Param, Patch } from '@nestjs/common';
+import { Body, Delete, Get, Param } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
@@ -11,20 +11,25 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { AwsService } from 'src/aws.service';
 import { User } from 'src/common/decorators/user.decorator';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
+import { ToiletReportDto } from 'src/toilets/dtos/toilet.report.dto';
 import { ToiletEntity } from 'src/toilets/toilets.entity';
 import { UserEntity } from 'src/users/users.entity';
 import { ReviewAddDto } from '../dtos/review.add.dto';
+import { ToiletsReivew } from '../dtos/review.toilet.dto';
+import { ReviewEntity } from '../reviews.entity';
 import { ReviewsService } from '../services/reviews.service';
 
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/reviews')
+@ApiTags('REVIEW')
 export class ReviewsController {
-  toiletImgUrl;
+  toiletImgUrl: string;
   constructor(
     private readonly reviewsService: ReviewsService,
     private readonly awsService: AwsService,
@@ -46,7 +51,7 @@ export class ReviewsController {
   async reviewAdditional(
     @User() userInfo: UserEntity,
     @Body() reviewAddDto: ReviewAddDto,
-  ) {
+  ): Promise<ReviewEntity> {
     return await this.reviewsService.additional(
       userInfo,
       reviewAddDto,
@@ -84,19 +89,43 @@ export class ReviewsController {
     this.toiletImgUrl = toiletImgUrl;
   }
 
-  @ApiOperation({ summary: '리뷰 수정 api' })
+  @ApiOperation({ summary: '사용자가 작성한 리뷰 get' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
+    type: [ReviewEntity],
   })
   @ApiResponse({
     status: 500,
     description: 'Internal server error',
   })
+  @Get()
+  async getUserReview(@User() userInfo: UserEntity): Promise<ReviewEntity[]> {
+    return await this.reviewsService.getUserReview(userInfo);
+  }
+
+  @ApiOperation({ summary: '화장실 별 리뷰 get' })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
-  @Patch()
-  async reviewModify() {}
+  @ApiResponse({
+    status: 200,
+    description:
+      '리뷰: id, rate, content, time 반환, user: imgUrl, nickname 반환',
+    type: [ToiletsReivew],
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+  })
+  @Post('toilet')
+  async getToiletReview(
+    @Body() toiletReportDto: ToiletReportDto,
+  ): Promise<ToiletsReivew[]> {
+    return await this.reviewsService.getToiletReview(toiletReportDto);
+  }
 
   @ApiOperation({ summary: '리뷰 삭제 api' })
   @ApiConsumes('application/x-www-form-urlencoded')

@@ -28,6 +28,9 @@ export class ReviewEntity extends CommonEntity {
   @Column({ type: 'int', nullable: false })
   rate: number;
 
+  @ApiProperty({
+    description: '화장실 이미지 주소',
+  })
   @IsString()
   @Column({ type: 'varchar', nullable: true })
   toiletImg: string;

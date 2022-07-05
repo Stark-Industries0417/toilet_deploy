@@ -8,6 +8,7 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { User } from 'src/common/decorators/user.decorator';
@@ -17,9 +18,11 @@ import { ToiletAddDto } from '../dtos/toilet.add.dto';
 import { ToiletAroundDto } from '../dtos/toilet.around.dto';
 import { ToiletReportDto } from '../dtos/toilet.report.dto';
 import { ToiletsService } from '../services/toilets.service';
+import { ToiletEntity } from '../toilets.entity';
 
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/toilets')
+@ApiTags('TOILET')
 export class ToiletsController {
   constructor(private readonly toiletsService: ToiletsService) {}
 
@@ -58,7 +61,7 @@ export class ToiletsController {
   async toiletAdditional(
     @User() userInfo: UserEntity,
     @Body() toiletAddDto: ToiletAddDto,
-  ) {
+  ): Promise<ToiletEntity> {
     return await this.toiletsService.toiletAdditional(userInfo, toiletAddDto);
   }
 
