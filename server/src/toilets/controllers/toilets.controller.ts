@@ -8,6 +8,7 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { User } from 'src/common/decorators/user.decorator';
@@ -20,6 +21,7 @@ import { ToiletsService } from '../services/toilets.service';
 
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/toilets')
+@ApiTags('TOILET')
 export class ToiletsController {
   constructor(private readonly toiletsService: ToiletsService) {}
 
