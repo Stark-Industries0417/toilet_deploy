@@ -76,15 +76,12 @@ export class ToiletEntity extends CommonEntity {
   lng: number;
 
   @ApiProperty({
-    example: 'https://toiletImg.s3~~~~~.com',
-    description: '화장실 이미지',
-    required: false,
-  })
-  @ApiProperty({
     example: 0,
     description: '화장실 삭제 요청 받은 횟수',
     default: 0,
   })
+  @Type(() => Number)
+  @IsNumber()
   @Column({ type: 'int', nullable: true, default: 0 })
   stack: number;
 
