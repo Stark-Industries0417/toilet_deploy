@@ -1,4 +1,4 @@
-import { Body, Delete, Get, Param } from '@nestjs/common';
+import { Body, Delete, Get, Param, Patch } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
@@ -21,6 +21,8 @@ import { ToiletReportDto } from 'src/toilets/dtos/toilet.report.dto';
 import { ToiletEntity } from 'src/toilets/toilets.entity';
 import { UserEntity } from 'src/users/users.entity';
 import { ReviewAddDto } from '../dtos/review.add.dto';
+import { ReviewIdDto } from '../dtos/review.id.dto';
+import { ReviewModifyDto } from '../dtos/review.modify.dto';
 import { ToiletsReivew } from '../dtos/review.toilet.dto';
 import { ReviewEntity } from '../reviews.entity';
 import { ReviewsService } from '../services/reviews.service';
@@ -128,6 +130,28 @@ export class ReviewsController {
     return await this.reviewsService.getToiletReview(toiletReportDto);
   }
 
+  @ApiOperation({ summary: '리뷰 수정 api' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    type: ReviewEntity,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+  })
+  @Patch('modify')
+  async modifyReview(
+    @Body() reviewModifyDto: ReviewModifyDto,
+  ): Promise<ReviewEntity> {
+    return await this.reviewsService.modifyReview(
+      reviewModifyDto,
+      this.toiletImgUrl,
+    );
+  }
+
   @ApiOperation({ summary: '리뷰 삭제 api' })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBearerAuth('access-token')
@@ -137,7 +161,9 @@ export class ReviewsController {
     type: ToiletEntity,
   })
   @Delete('delete/:id')
-  async reviewDelete(@Param('id') id: string) {
-    return await this.reviewsService.reviewDelete(id);
+  async reviewDelete(
+    @Param('id') reviewIdDto: ReviewIdDto,
+  ): Promise<ToiletEntity> {
+    return await this.reviewsService.reviewDelete(reviewIdDto);
   }
 }

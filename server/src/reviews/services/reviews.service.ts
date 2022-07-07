@@ -7,6 +7,8 @@ import { ToiletEntity } from 'src/toilets/toilets.entity';
 import { UserEntity } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
 import { ReviewAddDto } from '../dtos/review.add.dto';
+import { ReviewIdDto } from '../dtos/review.id.dto';
+import { ReviewModifyDto } from '../dtos/review.modify.dto';
 import { ToiletsReivew } from '../dtos/review.toilet.dto';
 import { ReviewEntity } from '../reviews.entity';
 
@@ -88,7 +90,7 @@ export class ReviewsService {
   }: ToiletReportDto): Promise<ToiletsReivew[]> {
     try {
       const reviews = await this.reviewsRepository.query(`
-        SELECT review.id, user.img_url, user.nickname, review.rate, 
+        SELECT review.id, user.img_url as user_img, user.nickname, review.rate, review.toilet_img,
         DATE_FORMAT(CONVERT_TZ(review.created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as time,
         review.content
         FROM toilet.REVIEW as review, toilet.USER as user, toilet.TOILET as toilet
@@ -102,7 +104,45 @@ export class ReviewsService {
     }
   }
 
-  async reviewDelete(id: string) {
+  async modifyReview(
+    reviewModifyDto: ReviewModifyDto,
+    toiletImgUrl: string,
+  ): Promise<ReviewEntity> {
+    try {
+      const { id, content, rate, common, lock, types, paper, disabled } =
+        reviewModifyDto;
+      const option = await this.optionReposotiry.save({
+        common,
+        lock,
+        types,
+        paper,
+        disabled,
+      });
+      const review = await this.reviewsRepository.findOne({
+        where: { id },
+        relations: ['toilet', 'option'],
+      });
+      review.content = content;
+      review.rate = rate;
+      review.toiletImg = toiletImgUrl;
+      review.option = option;
+      await this.reviewsRepository.save(review);
+
+      const toilet = await this.toiletsRepository.findOne({
+        where: { id: review.toilet.id },
+        relations: ['reviews', 'option'],
+      });
+      toilet.option = option;
+
+      await this.toiletsRepository.save(toilet);
+
+      return review;
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
+  async reviewDelete({ id }: ReviewIdDto): Promise<ToiletEntity> {
     try {
       const review = await this.reviewsRepository.findOne({
         where: { id },
