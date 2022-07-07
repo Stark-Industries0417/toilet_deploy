@@ -151,6 +151,22 @@ export class ReviewsController {
     );
   }
 
+  @ApiOperation({ summary: '리뷰 신고 API' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'internal server error',
+  })
+  @Post('report')
+  async reportReview(@Body() reviewIdDto: ReviewIdDto): Promise<ReviewEntity> {
+    return await this.reviewsService.reportReview(reviewIdDto);
+  }
+
   @ApiOperation({ summary: '리뷰 삭제 api' })
   @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBearerAuth('access-token')
