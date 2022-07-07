@@ -142,6 +142,42 @@ export class ReviewsService {
     }
   }
 
+  async reportReview({ id }: ReviewIdDto): Promise<ReviewEntity> {
+    try {
+      const review = await this.reviewsRepository.findOne({
+        where: { id },
+        relations: ['toilet', 'option'],
+      });
+      review.stack++;
+
+      if (review.stack === 3) {
+        const toilet = await this.toiletsRepository.findOne({
+          where: { id: review.toilet.id },
+        });
+        await this.optionReposotiry.remove(review.option);
+        const [hasReview] = await this.reviewsRepository.query(`
+        SELECT *
+        FROM toilet.REVIEW
+        WHERE toilet_id = '${review.toilet.id}'
+        ORDER BY created_at DESC
+        LIMIT 1;
+      `);
+
+        if (hasReview) {
+          toilet.option = hasReview.option_id;
+        } else {
+          toilet.option = null;
+        }
+        await this.toiletsRepository.save(toilet);
+        return review;
+      } else {
+        return await this.reviewsRepository.save(review);
+      }
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
   async reviewDelete({ id }: ReviewIdDto): Promise<ToiletEntity> {
     try {
       const review = await this.reviewsRepository.findOne({
