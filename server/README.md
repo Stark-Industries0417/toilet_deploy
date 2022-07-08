@@ -26,12 +26,6 @@
 ![drawio](https://user-images.githubusercontent.com/54254402/136225436-8693e719-f8cc-4670-bbbd-33e6e68096cc.png)
 
 
-## Usage
-
-```sh
-$ ./gradlew clean build
-```
-
 ## ERD
 
 <img width="783" alt="image" src="https://user-images.githubusercontent.com/59994664/177917910-5f7ab093-24ad-4d69-8071-8ae2e1061619.png">
