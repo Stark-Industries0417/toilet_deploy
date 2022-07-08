@@ -72,10 +72,11 @@ export class ReviewsService {
   async getUserReview(userInfo: UserEntity): Promise<ReviewEntity[]> {
     try {
       const reviews = await this.reviewsRepository.query(`
-      SELECT review.id, toilet.address, rate, content, toilet_img,
-      DATE_FORMAT(CONVERT_TZ(review.created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as time
-      FROM toilet.REVIEW as review, toilet.TOILET as toilet
-      WHERE review.author_id = '${userInfo.id}' and review.toilet_id = toilet.id
+      SELECT review.id as review_id, toilet.address, rate, content, toilet_img,
+      DATE_FORMAT(CONVERT_TZ(review.created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as review_time,
+      o.id as option_id, o.common, o.lock, o.paper, o.disabled, o.types
+      FROM toilet.REVIEW as review, toilet.TOILET as toilet, toilet.OPTION as o
+      WHERE review.author_id = '${userInfo.id}' and review.toilet_id = toilet.id and review.option_id = o.id
       ORDER BY review.created_at DESC
       `);
 
@@ -90,11 +91,13 @@ export class ReviewsService {
   }: ToiletReportDto): Promise<ToiletsReivew[]> {
     try {
       const reviews = await this.reviewsRepository.query(`
-        SELECT review.id, user.img_url as user_img, user.nickname, review.rate, review.toilet_img,
+        SELECT review.id as review_id, user.img_url as user_img, user.nickname, review.rate, review.toilet_img as toilet_img,
         DATE_FORMAT(CONVERT_TZ(review.created_at, 'UTC', 'Asia/Seoul'), '%Y/%m/%d') as time,
-        review.content
-        FROM toilet.REVIEW as review, toilet.USER as user, toilet.TOILET as toilet
+        review.content,
+        o.id as option_id, o.common, o.lock, o.paper, o.disabled, o.types
+        FROM toilet.REVIEW as review, toilet.USER as user, toilet.TOILET as toilet, toilet.OPTION as o
         WHERE review.toilet_id = toilet.id and review.author_id = user.id and toilet.address = '${address}'
+        and review.option_id = o.id
         ORDER by review.created_at DESC;
       `);
 

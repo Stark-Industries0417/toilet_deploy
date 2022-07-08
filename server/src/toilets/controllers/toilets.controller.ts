@@ -27,6 +27,27 @@ export class ToiletsController {
   constructor(private readonly toiletsService: ToiletsService) {}
 
   @ApiOperation({
+    summary: '해당 주소의 화장실 정보 읽기 API',
+  })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    type: ToiletReportDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @Post()
+  async getOneToilet(
+    @Body() toiletReportDto: ToiletReportDto,
+  ): Promise<ToiletEntity> {
+    return await this.toiletsService.getOneToilet(toiletReportDto);
+  }
+
+  @ApiOperation({
     summary:
       '내 주변 화장실 정보와 옵션 정보 API, 테스트 하실 때 화장실 먼저 추가하셔야 합니다',
   })

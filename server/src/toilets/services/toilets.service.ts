@@ -75,6 +75,15 @@ export class ToiletsService {
     }
   }
 
+  async getOneToilet(toiletReportDto: ToiletReportDto): Promise<ToiletEntity> {
+    try {
+      const toilet = await this.toiletsRepository.findOne(toiletReportDto);
+      return toilet;
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
   async toiletReport(toiletReportDto: ToiletReportDto) {
     try {
       const toilet = await this.toiletsRepository.findOne(toiletReportDto);
