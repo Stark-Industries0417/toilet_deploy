@@ -3,13 +3,6 @@
 
 > Which Toilet Back-End Server Project
 
-<div align=center>
-  <img width="249" alt="" src="https://user-images.githubusercontent.com/54254402/133126938-f76c8dfb-255e-4daf-afef-499736d987f6.png">
-</div>
-<h2 align=center>케이쿡은 커스텀케이크 주문 플랫폼을 개발하고 있는 초기스타트업입니다.</h2>
-
-![웹 1920 – 케이크](https://user-images.githubusercontent.com/54254402/133126499-abab1a68-12dd-429c-b204-5be48b3b11a4.png)
-
 
 ## API Docs
 
@@ -27,14 +20,6 @@
   <img src="https://img.shields.io/badge/-JWT-yellowgreen"/>&nbsp
   <img src="https://img.shields.io/badge/-TypeORM-violet"/>&nbsp
 </p>
-
-## 개발환경
-
-
-- backend
-  - java11
-  - gradle
-  - spring-boot 2.5.3
 
 ## 시스템 구성도
 
@@ -64,32 +49,10 @@ $ ./gradlew clean build
 
 
 
-
-- 백엔드 빌드 및 배포 자동화(잰킨스, 도커) (21/09/21) : [시스템 구상도](https://user-images.githubusercontent.com/54254402/134108670-568b2458-b80b-4706-a27b-c027e7aa7d1e.png)
-- 계정의 쿠폰 조회 API 완성 (21/09/30) - `commit` : [1492cb9](https://github.com/vividswan/K.Cook-Server/commit/1492cb91a933c76e5c7448623b6b6ddceb1fa5dc)
-- 로그인 한 회원의 사용 API 로그 저장 기능 추가(`Spring AOP`) (21/10/06) - `commit` : [2b387bc](https://github.com/vividswan/K.Cook-Server/commit/2b387bc42bcea2982078ff9a3ae2b54a7913537b)
-
-
-
 ## Author
 
-👤 **vividswan**
-
-* Website: vividswan.github.io
-* Github: [@vividswan](https://github.com/vividswan)
-
-## 🤝 Contributing
-
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/vividswan/K.Cook-Server/issues). 
-
-## Show your support
-
-Give a ⭐️ if this project helped you!
-
-## 📝 License
-
-Copyright © 2021 [vividswan](https://github.com/vividswan).<br />
-This project is [MIT](https://github.com/vividswan/K.Cook-Server/blob/main/LICENSE) licensed.
+👤 **Stark-Industries0417**
+* Github: [@Stark-Industries0417](https://github.com/Stark-Industries0417)
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
