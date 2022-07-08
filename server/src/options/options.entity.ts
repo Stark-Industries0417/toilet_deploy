@@ -35,7 +35,7 @@ export class OptionEntity extends CommonEntity {
   })
   @Type(() => Array)
   @IsArray()
-  @Column('simple-array')
+  @Column('simple-array', { nullable: true })
   types: number[];
 
   @ApiProperty({
