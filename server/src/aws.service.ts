@@ -28,6 +28,15 @@ export class AwsService {
       const key = `${folder}/${Date.now()}_${path.basename(
         file.originalname,
       )}`.replace(/ /g, '');
+      const s3Object = await this.awsS3
+        .putObject({
+          Bucket: this.S3_BUCKET_NAME,
+          Key: key,
+          Body: file.buffer,
+          ACL: 'public-read',
+          ContentType: file.mimetype,
+        })
+        .promise();
       return { key, contentType: file.mimetype };
     } catch (error) {
       throw new BadRequestException(`File upload failed : ${error}`);
