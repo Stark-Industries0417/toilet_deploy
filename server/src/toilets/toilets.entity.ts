@@ -85,6 +85,13 @@ export class ToiletEntity extends CommonEntity {
   @Column({ type: 'int', nullable: true, default: 0 })
   stack: number;
 
+  @ApiProperty({
+    example: 3,
+    description: '화장실 청결도',
+  })
+  @Column({ type: 'float', nullable: false, default: 0 })
+  clean: number;
+
   @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets)
   @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
   author: UserEntity;
