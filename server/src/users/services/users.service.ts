@@ -93,6 +93,19 @@ export class UsersService {
     }
   }
 
+  async modifyUserImg(
+    userInfo: UserEntity,
+    modifyImg: string,
+  ): Promise<UserResponseDto> {
+    const user = await this.usersRepository.findOne({
+      where: userInfo,
+    });
+    user.imgUrl = modifyImg;
+    await this.usersRepository.save(user);
+
+    return this.userFilter(user);
+  }
+
   async modifyPassword(
     userModifyPasswordDto: UserModifyPasswordDto,
     email: UserEmailDto,
