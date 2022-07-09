@@ -63,6 +63,19 @@ export class ReviewsService {
         await this.usersRepository.save(user),
         await this.toiletsRepository.save(toilet),
       ]);
+
+      const setCleanAvg = await this.toiletsRepository.findOne({
+        where: { address },
+      });
+      const reviews = await this.reviewsRepository.find({
+        where: { toilet },
+      });
+      const cleanAvg = reviews.reduce((arr, cur, i, { length }) => {
+        return i === length - 1 ? (arr + cur.rate) / length : arr + cur.rate;
+      }, 0);
+
+      setCleanAvg.clean = cleanAvg;
+      await this.toiletsRepository.save(setCleanAvg);
       return review;
     } catch (err) {
       throw new InternalServerErrorException(err.message);
