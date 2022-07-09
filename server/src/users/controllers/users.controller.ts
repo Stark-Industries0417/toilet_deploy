@@ -126,6 +126,40 @@ export class UsersController {
 
   @ApiResponse({
     status: 200,
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: '유저 이미지 수정 api' })
+  @UseInterceptors(FileInterceptor('image'))
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Patch('upload')
+  async modifyUserImg(
+    @User() userInfo: UserEntity,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<UserResponseDto> {
+    const { key } = await this.awsService.uploadFileToS3('users', file);
+    const userImg = this.awsService.getAwsS3FileUrl(key);
+    return await this.usersService.modifyUserImg(userInfo, userImg);
+  }
+
+  @ApiResponse({
+    status: 200,
     description:
       '비밀번호 재설정 페이지 url: http://localhost:3000/find_password 반환 (임시)',
   })
