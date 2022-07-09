@@ -34,7 +34,7 @@ export class ToiletsController {
   @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
-    type: ToiletReportDto,
+    type: ToiletEntity,
   })
   @ApiResponse({
     status: 500,
