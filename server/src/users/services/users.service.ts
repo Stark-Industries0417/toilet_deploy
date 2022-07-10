@@ -14,29 +14,23 @@ import { UserEmailDto } from '../dtos/user.email.dto';
 
 @Injectable()
 export class UsersService {
-  userImg: string;
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
     private readonly awsService: AwsService,
-  ) {
-    this.userImg =
-      'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg';
-  }
+  ) {}
 
-  saveImg(key: string) {
-    this.userImg = this.awsService.getAwsS3FileUrl(key);
-    return this.userImg;
-  }
-
-  readonly userFilter = (user: UserEntity): UserResponseDto => ({
+  private readonly userFilter = (user: UserEntity): UserResponseDto => ({
     id: user.id,
     email: user.email,
     nickname: user.nickname,
     imgUrl: user.imgUrl,
   });
 
-  async signUp(userRegisterDto: UserRegisterDto): Promise<UserResponseDto> {
+  async signUp(
+    userRegisterDto: UserRegisterDto,
+    userImg: string,
+  ): Promise<UserResponseDto> {
     const { email, password, checkPassword, nickname } = userRegisterDto;
     const hasEmail = await this.usersRepository.findOne({ email });
     const hasNickname = await this.usersRepository.findOne({ nickname });
@@ -51,7 +45,7 @@ export class UsersService {
     if (hasNickname) {
       throw new ConflictException('이미 사용중인 닉네임 입니다.');
     }
-    const imgUrl = this.userImg;
+    const imgUrl = userImg;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
