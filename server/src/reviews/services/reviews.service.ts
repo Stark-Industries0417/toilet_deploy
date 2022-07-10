@@ -120,6 +120,14 @@ export class ReviewsService {
     }
   }
 
+  async photoDelete({ id }: ReviewIdDto): Promise<ReviewEntity> {
+    const review = await this.reviewsRepository.findOne({
+      where: { id },
+    });
+    review.toiletImg = null;
+    return await this.reviewsRepository.save(review);
+  }
+
   async modifyReview(
     reviewModifyDto: ReviewModifyDto,
     toiletImgUrl: string,
@@ -138,9 +146,11 @@ export class ReviewsService {
         where: { id },
         relations: ['toilet', 'option'],
       });
+      if (toiletImgUrl && review.toiletImg !== toiletImgUrl) {
+        review.toiletImg = toiletImgUrl;
+      }
       review.content = content;
       review.rate = rate;
-      review.toiletImg = toiletImgUrl;
       review.option = option;
       await this.reviewsRepository.save(review);
 
@@ -194,10 +204,10 @@ export class ReviewsService {
     }
   }
 
-  async reviewDelete({ id }: ReviewIdDto): Promise<ToiletEntity> {
+  async reviewDelete(reviewIdDto: string): Promise<ToiletEntity> {
     try {
       const review = await this.reviewsRepository.findOne({
-        where: { id },
+        where: { id: reviewIdDto },
         relations: ['option', 'toilet'],
       });
 

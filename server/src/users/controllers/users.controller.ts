@@ -34,12 +34,15 @@ import { UserModifyPasswordDto } from '../dtos/user.modifyPassword.dto';
 @UseInterceptors(SuccessInterceptor)
 export class UsersController {
   email: UserEmailDto;
+  userImg: string;
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
     private readonly awsService: AwsService,
     private readonly mailService: MailService,
   ) {
+    this.userImg =
+      'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg';
     this.email = { email: '' };
   }
 
@@ -56,8 +59,8 @@ export class UsersController {
   @ApiConsumes('application/json')
   @ApiOperation({ summary: '회원가입' })
   @Post('register')
-  signUp(@Body() userRegisterDto: UserRegisterDto) {
-    return this.usersService.signUp(userRegisterDto);
+  signUp(@Body() userRegisterDto: UserRegisterDto): Promise<UserResponseDto> {
+    return this.usersService.signUp(userRegisterDto, this.userImg);
   }
 
   @ApiResponse({
@@ -120,8 +123,13 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
   async uploadUserImg(@UploadedFile() file: Express.Multer.File) {
-    const { key } = await this.awsService.uploadFileToS3('users', file);
-    return this.usersService.saveImg(key);
+    if (file) {
+      const { key } = await this.awsService.uploadFileToS3('users', file);
+      this.userImg = this.awsService.getAwsS3FileUrl(key);
+    } else {
+      this.userImg =
+        'https://toiletprofile.s3.ap-northeast-2.amazonaws.com/Profile-Image.svg';
+    }
   }
 
   @ApiResponse({
@@ -148,14 +156,9 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('image'))
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch('upload')
-  async modifyUserImg(
-    @User() userInfo: UserEntity,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<UserResponseDto> {
-    const { key } = await this.awsService.uploadFileToS3('users', file);
-    const userImg = this.awsService.getAwsS3FileUrl(key);
-    return await this.usersService.modifyUserImg(userInfo, userImg);
+  @Patch('modify_image')
+  async modifyUserImg(@User() userInfo: UserEntity): Promise<UserResponseDto> {
+    return await this.usersService.modifyUserImg(userInfo, this.userImg);
   }
 
   @ApiResponse({

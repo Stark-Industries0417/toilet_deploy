@@ -87,9 +87,31 @@ export class ReviewsController {
   @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
   async uploadToiletImg(@UploadedFile() file: Express.Multer.File) {
-    const { key } = await this.awsService.uploadFileToS3('toilets', file);
-    const toiletImgUrl = this.awsService.getAwsS3FileUrl(key);
-    this.toiletImgUrl = toiletImgUrl;
+    if (file) {
+      const { key } = await this.awsService.uploadFileToS3('toilets', file);
+      const toiletImgUrl = this.awsService.getAwsS3FileUrl(key);
+      this.toiletImgUrl = toiletImgUrl;
+    } else {
+      this.toiletImgUrl = null;
+    }
+  }
+
+  @ApiOperation({ summary: '리뷰 수정폼에서 사진 삭제 api' })
+  @ApiResponse({
+    status: 200,
+    description: '리뷰 이미지 삭제 완료',
+    type: ReviewEntity,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiBearerAuth('access-token')
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @UseGuards(JwtAuthGuard)
+  @Post('photo_delete')
+  async photoDelete(@Body() reviewIdDto: ReviewIdDto): Promise<ReviewEntity> {
+    return await this.reviewsService.photoDelete(reviewIdDto);
   }
 
   @ApiOperation({ summary: '사용자가 작성한 리뷰 get' })
@@ -177,9 +199,7 @@ export class ReviewsController {
     type: ToiletEntity,
   })
   @Delete('delete/:id')
-  async reviewDelete(
-    @Param('id') reviewIdDto: ReviewIdDto,
-  ): Promise<ToiletEntity> {
+  async reviewDelete(@Param('id') reviewIdDto: string): Promise<ToiletEntity> {
     return await this.reviewsService.reviewDelete(reviewIdDto);
   }
 }
