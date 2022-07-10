@@ -194,10 +194,10 @@ export class ReviewsService {
     }
   }
 
-  async reviewDelete({ id }: ReviewIdDto): Promise<ToiletEntity> {
+  async reviewDelete(reviewIdDto: ReviewIdDto): Promise<ToiletEntity> {
     try {
       const review = await this.reviewsRepository.findOne({
-        where: { id },
+        where: { id: reviewIdDto },
         relations: ['option', 'toilet'],
       });
 
