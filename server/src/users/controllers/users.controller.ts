@@ -156,7 +156,7 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('image'))
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Post('modify_image')
+  @Patch('modify_image')
   async modifyUserImg(@User() userInfo: UserEntity): Promise<UserResponseDto> {
     return await this.usersService.modifyUserImg(userInfo, this.userImg);
   }
