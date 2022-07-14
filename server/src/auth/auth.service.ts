@@ -53,9 +53,16 @@ export class AuthService {
       where: { email },
     });
     if (hasUser) {
-      throw new ConflictException('이미 가입된 이메일 입니다.');
+      const payload: Payload = { email, sub: hasUser.id };
+      const token = this.jwtService.sign(payload);
+      return {
+        token,
+        id: hasUser.id,
+        email: hasUser.email,
+        nickname: hasUser.nickname,
+        imgUrl: hasUser.imgUrl,
+      };
     }
-
     const registerUser = await this.usersService.signUp(
       {
         email,
@@ -65,6 +72,7 @@ export class AuthService {
       },
       imgUrl,
     );
+
     const payload: Payload = { email, sub: registerUser.id };
     const token = this.jwtService.sign(payload);
     return {
