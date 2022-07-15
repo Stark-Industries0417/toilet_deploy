@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/common/decorators/user.decorator';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
@@ -6,6 +12,7 @@ import { UserResponseDto } from 'src/users/dtos/user.response.dto';
 import { AuthService } from './auth.service';
 import { KakaoAuthGuard } from './jwt/kakao.guard';
 import { KakaoRegisterDto } from './kakao.register.dto';
+import { Response } from 'express';
 
 @ApiTags('kakao')
 @UseInterceptors(SuccessInterceptor)
@@ -39,7 +46,11 @@ export class AuthController {
   })
   @UseGuards(KakaoAuthGuard)
   @Get('/kakao/redirect')
-  async kakaoLoginCallback(@User() kakao: KakaoRegisterDto) {
-    return this.authService.kakaoLogin(kakao);
+  async kakaoLoginCallback(
+    @User() kakao: KakaoRegisterDto,
+    @Res() res: Response,
+  ) {
+    const user = await this.authService.kakaoLogin(kakao);
+    return res.status(200).send({ user });
   }
 }
