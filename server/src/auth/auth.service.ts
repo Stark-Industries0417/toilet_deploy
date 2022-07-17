@@ -59,8 +59,8 @@ export class AuthService {
         token,
         id: hasUser.id,
         email: hasUser.email,
-        nickname: hasUser.nickname,
-        imgUrl: hasUser.imgUrl,
+        nickname,
+        imgUrl,
       };
     }
     const registerUser = await this.usersService.signUp(
