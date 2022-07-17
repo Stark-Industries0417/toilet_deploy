@@ -54,7 +54,8 @@ export class AuthController {
     res.cookie('user', user, {
       domain: process.env.NODE_ENV === 'production' ? '***' : 'localhost',
       path: '/',
-      sameSite: 'none',
+      sameSite: 'lax',
+      secure: false,
     });
     res.redirect('http://localhost:3000/');
     res.end();
