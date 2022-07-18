@@ -92,7 +92,9 @@ export class ToiletEntity extends CommonEntity {
   @Column({ type: 'float', nullable: false, default: 0 })
   clean: number;
 
-  @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets)
+  @ManyToOne(() => UserEntity, (author: UserEntity) => author.toilets, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
   author: UserEntity;
 
