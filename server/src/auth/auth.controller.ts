@@ -51,12 +51,7 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = await this.authService.kakaoLogin(kakao);
-    res.cookie('user', user, {
-      domain: process.env.NODE_ENV === 'production' ? '***' : 'localhost',
-      path: '/',
-      sameSite: 'lax',
-      secure: false,
-    });
+    res.cookie('user', user);
     res.redirect('http://localhost:3000/');
     res.end();
   }
