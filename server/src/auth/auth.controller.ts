@@ -18,6 +18,7 @@ import { Response } from 'express';
 @UseInterceptors(SuccessInterceptor)
 @Controller('api/auth')
 export class AuthController {
+  kakaoUser: UserResponseDto;
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({
@@ -34,15 +35,14 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: '카카오 로그인한 사용자의 정보 반환하는 api',
+    summary: '리다이렉트 API',
   })
   @ApiResponse({
-    status: 200,
-    type: UserResponseDto,
+    status: 302,
   })
   @ApiResponse({
-    status: 409,
-    description: '이미 이메일로 가입한 경우 ConflictException 에러를 띄웁니다.',
+    status: 500,
+    description: 'Internal server error',
   })
   @UseGuards(KakaoAuthGuard)
   @Get('/kakao/redirect')
@@ -51,8 +51,24 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = await this.authService.kakaoLogin(kakao);
-    res.cookie('user', user);
+    this.kakaoUser = user;
     res.redirect('http://localhost:3000/');
     res.end();
+  }
+
+  @ApiOperation({
+    summary: '프런트에게 카카오 사용자 정보 전달 API',
+  })
+  @ApiResponse({
+    status: 200,
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @Get('/kakao/user')
+  kakaoUserInfo() {
+    return this.kakaoUser;
   }
 }
