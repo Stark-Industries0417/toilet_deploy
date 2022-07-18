@@ -1,4 +1,4 @@
-import { Body, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Delete, Get, Req, UseGuards } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { Post, Patch } from '@nestjs/common';
@@ -235,5 +235,22 @@ export class UsersController {
       this.email,
       user,
     );
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: '회원 탈퇴 성공',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiOperation({ summary: '회원 탈퇴 API' })
+  @Delete('withdrawal')
+  async userWithdrawal(@User() userInfo: UserEntity) {
+    return await this.usersService.userWithdrawal(userInfo);
   }
 }
