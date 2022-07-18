@@ -8,15 +8,17 @@ import { UserResponseDto } from '../dtos/user.response.dto';
 import { AwsService } from 'src/aws.service';
 import { ConflictException } from '@nestjs/common';
 import { UserEditNicknameInputDto } from '../dtos/user.modify.nickname.dto';
-import { ValidationDto } from '../dtos/user.validation.dto';
 import { UserModifyPasswordDto } from '../dtos/user.modifyPassword.dto';
 import { UserEmailDto } from '../dtos/user.email.dto';
+import { ToiletEntity } from 'src/toilets/toilets.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(ToiletEntity)
+    private readonly toiletsRepository: Repository<ToiletEntity>,
     private readonly awsService: AwsService,
   ) {}
 
@@ -133,6 +135,14 @@ export class UsersService {
       return this.userFilter(userInfo);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  async userWithdrawal(userInfo: UserEntity) {
+    try {
+      return await this.usersRepository.remove(userInfo);
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
     }
   }
 }
