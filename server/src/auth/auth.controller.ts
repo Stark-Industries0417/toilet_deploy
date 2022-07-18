@@ -68,7 +68,7 @@ export class AuthController {
     description: 'Internal server error',
   })
   @Get('/kakao/user')
-  kakaoUserInfo() {
+  kakaoUserInfo(): UserResponseDto {
     return this.kakaoUser;
   }
 }
