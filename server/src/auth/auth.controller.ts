@@ -19,7 +19,9 @@ import { Response } from 'express';
 @Controller('api/auth')
 export class AuthController {
   kakaoUser: UserResponseDto;
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {
+    this.kakaoUser = null;
+  }
 
   @ApiOperation({
     summary: '/api/kakao/redirect로 리다이렉트 되는 api 입니다.',
@@ -52,7 +54,7 @@ export class AuthController {
   ) {
     const user = await this.authService.kakaoLogin(kakao);
     this.kakaoUser = user;
-    res.redirect('http://localhost:3000/');
+    res.redirect('http://localhost:3000/auth/sns');
     res.end();
   }
 
