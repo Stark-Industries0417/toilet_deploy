@@ -53,12 +53,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = await this.authService.kakaoLogin(kakao);
-    this.kakaoUser = user;
-    res.cookie('user_info', user, {
-      sameSite: 'none',
-      secure: true,
-    });
-    res.redirect('http://localhost:3000/auth/sns');
+    res.cookie('user', user);
+    res.redirect('http://localhost:3000');
     res.end();
   }
 
