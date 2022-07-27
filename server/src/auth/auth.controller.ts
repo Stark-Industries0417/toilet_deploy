@@ -53,9 +53,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = await this.authService.kakaoLogin(kakao);
-    res.cookie('user', user);
-    res.redirect('http://localhost:3000');
-    res.end();
+    this.kakaoUser = user;
+    res.redirect('http://localhost:3000/auth/sns');
   }
 
   @ApiOperation({
@@ -71,6 +70,8 @@ export class AuthController {
   })
   @Get('/kakao/user')
   kakaoUserInfo(): UserResponseDto {
-    return this.kakaoUser;
+    const user = this.kakaoUser;
+    this.kakaoUser = null;
+    return user;
   }
 }
